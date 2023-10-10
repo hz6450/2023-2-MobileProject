@@ -13,6 +13,8 @@ export default function App(props) {
     require("./assets/forget.png"),
   ];
 
+  //안녕하세요
+
   // Ignore firebase v9 AsyncStorage warning
   React.useEffect(() => {
     LogBox.ignoreLogs([

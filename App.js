@@ -14,7 +14,7 @@ export default function App(props) {
   ];
 
   //안녕하세요
-
+  //태호의 테스팅
   // Ignore firebase v9 AsyncStorage warning
   React.useEffect(() => {
     LogBox.ignoreLogs([

@@ -1,6 +1,7 @@
 // screens/Home.js
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
+import OCRPage from '../Admin';
 
 const HomeScreen = ({ navigation }) => {
   const handleLogout = () => {
@@ -14,10 +15,12 @@ const HomeScreen = ({ navigation }) => {
     navigation.navigate('Login');
   };
 
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>홈 화면에 오신 것을 환영합니다!</Text>
       <Button title="로그아웃" onPress={handleLogout} />
+      <Button title="OCR 페이지 이동" onPress={() => navigation.navigate('OCR')} />
     </View>
   );
 };

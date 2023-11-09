@@ -17,7 +17,7 @@ const LoginForm = () => {
         style={styles.input}
         onChangeText={setEmail}
         value={email}
-        placeholder="이메일"
+        placeholder="학번"
         keyboardType="email-address"
         autoCapitalize="none"
       />

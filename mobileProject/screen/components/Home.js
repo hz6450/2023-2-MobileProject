@@ -16,7 +16,7 @@
     };
 
     const navigateToProfile = () => {
-      navigation.navigate('Profile',  { studentId: studentId });
+      navigation.navigate('Ocr',  { studentId: studentId });
     }
 
     const navigateToDetailCredit = () => {

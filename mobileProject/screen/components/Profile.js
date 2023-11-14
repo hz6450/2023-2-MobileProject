@@ -8,10 +8,18 @@ import firebaseConfig from '../../firebaseConfig';  // 경로는 실제 firebase
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 
-const ProfileScreen = ({ navigation }) => {
+const Profile = ({ route, navigation }) => {
   const [userInfo, setUserInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const studentId = '학번을_여기에_입력'; // 실제 학번 값으로 변경해야 합니다.
+  const studentId = route.params?.studentId || '기본값';
+
+  const handleLogout = () => {
+    // 로그아웃 로직 구현
+    // 예: 사용자 세션 종료, 인증 토큰 제거 등
+
+    // 로그인 화면으로 이동
+    navigation.navigate('Login');
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -57,6 +65,23 @@ const ProfileScreen = ({ navigation }) => {
   );
 };
 
-// ... 스타일과 handleLogout 함수 ...
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 20,
+  },
+  info: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  // 추가적인 스타일을 여기에 정의할 수 있습니다.
+});
 
-export default ProfileScreen;
+
+export default Profile;

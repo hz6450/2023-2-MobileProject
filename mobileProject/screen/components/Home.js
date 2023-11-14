@@ -2,7 +2,8 @@
   import React from 'react';
   import { View, Text, Button, StyleSheet } from 'react-native';
 
-  const HomeScreen = ({ navigation }) => {
+  const HomeScreen = ({ route, navigation }) => {
+    const studentId = route.params?.studentId;
     const handleLogout = () => {
       // 로그아웃 로직을 구현하세요.
       // 예를 들어, 사용자의 세션을 종료하거나 토큰을 제거합니다.
@@ -15,7 +16,7 @@
     };
 
     const navigateToProfile = () => {
-      navigation.navigate('Profile');
+      navigation.navigate('Profile',  { studentId: studentId });
     }
 
     const navigateToDetailCredit = () => {

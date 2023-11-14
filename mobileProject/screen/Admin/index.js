@@ -13,7 +13,7 @@ const DetectObject = () => {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
-        aspect: [4, 3],
+        aspect: [9, 16],
         quality: 1,
       });
 
@@ -32,29 +32,31 @@ const DetectObject = () => {
         alert("첫 번째 이미지를 선택해주세요!");
         return;
       }
-
+  
       // 구글 OCR API KEY
       const apiKey = "AIzaSyBwWnbAHz0KxxgwsON-qPzVmohJ-mU6Emc";
       const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
-
+  
       // 이미지 파일을 base64 형태로 전송
       const base64ImageData = await FileSystem.readAsStringAsync(imageUri, {
         encoding: FileSystem.EncodingType.Base64,
       });
-
+  
       const requestData = {
         requests: [
           {
             image: {
               content: base64ImageData,
             },
-            features: [{ type: 'LABEL_DETECTION', maxResults: 5}],
+            features: [{ type: 'DOCUMENT_TEXT_DETECTION' }],
           },
         ],
       };
-
+  
       const apiResponse = await axios.post(apiURL, requestData);
-      setLabels(apiResponse.data.responses[0].labelAnnotations);
+      const detectedText = apiResponse.data.responses[0].fullTextAnnotation.text;
+   
+      alert(`인식된 텍스트:\n${detectedText}`);
     } catch (error) {
       console.error("이미지 analyzing 에러: ", error);
       alert('이미지 analyzing 에러. 다시 시도해주세요.');

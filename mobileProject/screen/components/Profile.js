@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, ActivityIndicator } from 'react-native';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { initializeApp } from 'firebase/app';
-import firebaseConfig from '../../firebaseConfig';  // 경로는 실제 firebaseConfig가 위치한 곳에 맞춰야 합니다.
-
-// Firebase 앱 초기화 (이미 다른 곳에서 초기화가 되었다면 여기서는 생략 가능)
-const app = initializeApp(firebaseConfig);
-const firestore = getFirestore(app);
+import { db, doc, getDoc } from '../../firebaseConfig';
 
 const Profile = ({ route, navigation }) => {
   const [userInfo, setUserInfo] = useState(null);
@@ -25,7 +19,7 @@ const Profile = ({ route, navigation }) => {
     const fetchUserData = async () => {
       try {
         // Firestore에서 학번에 해당하는 문서를 조회합니다.
-        const docRef = doc(firestore, 'users', studentId);
+        const docRef = doc(db, 'users', studentId);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {

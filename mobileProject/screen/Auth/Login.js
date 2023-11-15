@@ -1,16 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
-
-// Firebase 모듈 임포트
-import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-
-// Firebase 설정 임포트
-import firebaseConfig from '../../firebaseConfig';  // 이렇게 변경
-// Firebase 앱 초기화
-const app = initializeApp(firebaseConfig);
-// Firestore 인스턴스 가져오기
-const firestore = getFirestore(app);
+import { db, doc, getDoc } from '../../firebaseConfig';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -20,7 +10,7 @@ const Login = ({ navigation }) => {
     console.log('로그인 시도 중...');  // 로그인 시도 로그 추가
     try {
       // Firestore에서 학번에 해당하는 문서를 조회합니다.
-      const userDocRef = doc(firestore, 'users', email);
+      const userDocRef = doc(db, 'users', email);
       const userDocSnap = await getDoc(userDocRef);
   
       console.log('문서 조회 완료', userDocSnap.exists());  // 문서 조회 성공 로그 추가

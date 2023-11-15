@@ -1,9 +1,7 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 
-// Your web app's Firebase configuration
+// 이해준
 const firebaseConfig = {
   apiKey: "AIzaSyDVdIf3cw-ApoOeM1vFSWmztwuAU1JZ3X0",
   authDomain: "mp-42119.firebaseapp.com",
@@ -13,7 +11,19 @@ const firebaseConfig = {
   appId: "1:364334395555:web:ed5c8ae17e46fbb80b4f16"
 };
 
-// Initialize Firebase
+// //장호열
+// const firebaseConfig = {
+//   apiKey: "AIzaSyDDLd9BqDenAFef-OuF2zBS2JNVerR1G-M",
+//   authDomain: "calendarrecipe.firebaseapp.com",
+//   projectId: "calendarrecipe",
+//   storageBucket: "calendarrecipe.appspot.com",
+//   messagingSenderId: "600725474057",
+//   appId: "1:600725474057:web:339ef0d9d179265d9721d8",
+//   measurementId: "G-JL9NRBNN82"
+// };
+
 const app = initializeApp(firebaseConfig);
 
-export default firebaseConfig;
+const db = getFirestore(app);
+
+export { db, doc, getDoc };

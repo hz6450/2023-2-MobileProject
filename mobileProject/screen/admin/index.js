@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
+import { db, doc, setDoc } from "../../firebaseConfig";
 
 const Ocr = () => {
   const [imageUri, setImageUri] = useState(null);
@@ -55,6 +56,13 @@ const Ocr = () => {
   
       const apiResponse = await axios.post(apiURL, requestData);
       const detectedText = apiResponse.data.responses[0].fullTextAnnotation.text;
+
+      // Firestore에 결과 저장
+      const ocrDocRef = doc(db, 'ocr', '1'); // 1은 고정값
+      await setDoc(ocrDocRef, {
+        detectedText,
+        imageUri,
+      }, { merge: true });
    
       alert(`인식된 텍스트:\n${detectedText}`);
     } catch (error) {

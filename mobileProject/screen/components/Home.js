@@ -1,9 +1,32 @@
   // screens/Home.js
   import React from 'react';
   import { View, Text, Button, StyleSheet } from 'react-native';
+  import { LineChart } from 'react-native-chart-kit';
+  import { Dimensions } from 'react-native';
+
 
   const HomeScreen = ({ route, navigation }) => {
     const studentId = route.params?.studentId;
+    const screenWidth = Dimensions.get('window').width;
+    const data = {
+      labels: ["1학기", "2학기", "3학기", "4학기"],
+      datasets: [
+        {
+          data: [20, 45, 28, 80],
+          strokeWidth: 2, // optional
+        },
+      ],
+    };
+
+    const chartConfig = {
+      backgroundGradientFrom: "#fff",
+      backgroundGradientTo: "#fff",
+      color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+      labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    };
+    
+    
+
     const handleLogout = () => {
       // 로그아웃 로직을 구현하세요.
       // 예를 들어, 사용자의 세션을 종료하거나 토큰을 제거합니다.
@@ -26,6 +49,14 @@
 
     return (
       <View style={styles.container}>
+
+      <LineChart
+        data={data}
+        width={screenWidth}
+        height={220}
+        chartConfig={chartConfig}
+      />
+
         <Text style={styles.title}>홈 화면에 오신 것을 환영합니다!</Text>
         <Button title="프로필 페이지" onPress={navigateToProfile} />
         <Button title="세부이수학점 페이지" onPress={navigateToDetailCredit} />

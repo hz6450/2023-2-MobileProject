@@ -44,7 +44,11 @@ const HomeScreen = ({ route, navigation }) => {
   };
 
   const navigateToProfile = () => {
-    navigation.navigate('Ocr',  { studentId: studentId });
+    navigation.navigate('Profile' ,  { studentId: studentId });
+  }
+
+  const navigateToOCR= () => {
+    navigation.navigate('Ocr');
   }
 
   const navigateToDetailCredit = () => {
@@ -86,6 +90,7 @@ const HomeScreen = ({ route, navigation }) => {
       </View>
 
       <Button title="프로필 페이지" onPress={navigateToProfile} />
+      <Button title="OCR" onPress={navigateToOCR} />
       <Button title="세부이수학점 페이지" onPress={navigateToDetailCredit} />
       <Button title="로그아웃" onPress={handleLogout} />
     </View>

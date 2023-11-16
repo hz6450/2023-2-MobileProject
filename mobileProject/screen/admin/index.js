@@ -4,6 +4,7 @@ import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { db, doc, setDoc } from "../../firebaseConfig";
+import { apiKey } from "react-native-dotenv";
 
 const Ocr = () => {
   const [imageUri, setImageUri] = useState(null);
@@ -34,8 +35,7 @@ const Ocr = () => {
         return;
       }
   
-      // 구글 OCR API KEY
-      const apiKey = "AIzaSyBwWnbAHz0KxxgwsON-qPzVmohJ-mU6Emc";
+      // 구글 OCR
       const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
   
       // 이미지 파일을 base64 형태로 전송

@@ -5,7 +5,7 @@ import LoginScreen from './screen/Auth/Login';
 import HomeScreen from './screen/components/Home';
 import Profile from './screen/components/Profile';
 import DetailCredit from './screen/components/DetailCredit';
-import Ocr from './screen/admin/index'
+import Ocr from './screen/Admin'
 
 // 스택 네비게이터 생성
 const Stack = createNativeStackNavigator();

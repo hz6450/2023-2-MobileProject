@@ -34,9 +34,8 @@ const Ocr = () => {
         return;
       }
   
-      // 구글 OCR API KEY
-      const apiKey = "AIzaSyBwWnbAHz0KxxgwsON-qPzVmohJ-mU6Emc";
-      const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
+      // 구글 OCR
+      const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${process.env.EXPO_PUBLIC_apiKey}`;
   
       // 이미지 파일을 base64 형태로 전송
       const base64ImageData = await FileSystem.readAsStringAsync(imageUri, {

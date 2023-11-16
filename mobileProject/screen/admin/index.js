@@ -4,7 +4,6 @@ import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { db, doc, setDoc } from "../../firebaseConfig";
-import { apiKey } from "react-native-dotenv";
 
 const Ocr = () => {
   const [imageUri, setImageUri] = useState(null);

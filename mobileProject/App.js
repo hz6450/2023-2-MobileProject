@@ -6,6 +6,7 @@ import HomeScreen from './screen/components/Home';
 import Profile from './screen/components/Profile';
 import DetailCredit from './screen/components/DetailCredit';
 import Ocr from './screen/admin/index'
+import Major from './screen/detail/Major';
 
 // 스택 네비게이터 생성
 const Stack = createNativeStackNavigator();
@@ -13,7 +14,8 @@ const Stack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Major">
+        <Stack.Screen name="Major" component={Major} options={{ title: '전공' }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ title: '로그인' }} />
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: '메인페이지' }} />
         <Stack.Screen name="Profile" component={Profile} options={{ title: '프로필 페이지' }} />

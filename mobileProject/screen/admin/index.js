@@ -5,6 +5,8 @@ import DisplayResultsComponent from './DisplayResultsComponent';
 
 const Ocr = () => {
   const [imageUri, setImageUri] = useState(null);
+  const [highlightedAreas, setHighlightedAreas] = useState([]);
+  const [imageSize, setImageSize] = useState({ width: 1030, height: 1008 });
 
   return (
     <>
@@ -12,9 +14,13 @@ const Ocr = () => {
       <ImageAnalyzerComponent
         imageUri={imageUri}
         setImageUri={setImageUri}
+        setHighlightedAreas={setHighlightedAreas}
+        setImageSize={setImageSize}
       />
       <DisplayResultsComponent
         imageUri={imageUri}
+        highlightedAreas={highlightedAreas}
+        imageSize={imageSize}
       />
     </>
   );

@@ -9,11 +9,7 @@ const ImageAnalzerComponent = ({ imageUri }) => {
           <View style={{ position: 'relative' }}>
             <Image
               source={{ uri: imageUri }}
-              style={{ width: 300, height: 300 }}
-              onLayout={(event) => {
-                const { width, height } = event.nativeEvent.layout;
-                setImageSize({ width, height });
-              }}
+              style={{ width: 500, height: 500 }}
             />
           </View>
         )}

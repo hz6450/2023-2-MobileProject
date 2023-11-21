@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
-import { db, doc, setDoc } from "../../firebaseConfig";
+import { db, doc, setDoc, getDoc } from "../../firebaseConfig";
 
 const DisplayResultsComponent = ({ imageUri }) => {
   // 구글 OCR 응답에서 특정 전공의 텍스트 좌표를 찾고 Firebase에 저장하는 함수
@@ -13,16 +13,17 @@ const DisplayResultsComponent = ({ imageUri }) => {
         if (text.includes(desiredText)) {
           const { minX, minY, maxX, maxY } = block.coordinates;
           const textCoordinates = { minX, minY, maxX, maxY };
-  
+
           const textDocRef = doc(db, 'ocr', desiredText);
           setDoc(textDocRef, textCoordinates, { merge: true });
-  
+
           delete desiredTexts[desiredText];
         }
       });
     });
   };
-  
+
+  // 1-1학기~ 4-2학기 까지
   const saveSemesterCoordinatesToFirebase = async (textBlocks, semesterAreas) => {
     textBlocks.forEach(block => {
       const text = block.text;
@@ -30,13 +31,37 @@ const DisplayResultsComponent = ({ imageUri }) => {
         if (text.includes(semester)) {
           const { minX, minY, maxX, maxY } = block.coordinates;
           const semesterCoordinates = { minX, minY, maxX, maxY };
-  
+
           const semesterDocRef = doc(db, 'ocr', semester);
           setDoc(semesterDocRef, semesterCoordinates, { merge: true });
           break; // 일치하는 학기를 찾았으면 더 이상 순회하지 않습니다.
         }
       }
     });
+  };
+
+  // Firebase에서 학기별 좌표를 불러오는 함수
+  const fetchSemesterCoordinatesFromFirebase = async () => {
+    const semesterCoordinates = {};
+
+    // 각 학기별로 Firestore에서 좌표 데이터를 조회합니다.
+    for (const semester of ['1-1 학기', '1-2 학기', '2-1 학기', '2-2 학기', '3-1 학기', '3-2 학기', '41 학기', '4-2 학기']) {
+      const semesterDocRef = doc(db, 'ocr', semester);
+      const docSnap = await getDoc(semesterDocRef);
+
+      if (docSnap.exists()) {
+        const { minX, maxX, minY } = docSnap.data();
+        // 좌표 값을 조정합니다.
+        semesterCoordinates[semester] = {
+          minX: minX - 30,
+          maxX: maxX + 30,
+          minY: minY + 30,
+          maxY: 980 // maxY는 항상 980으로 고정합니다.
+        };
+      }
+    }
+
+    return semesterCoordinates;
   };
 
   const analyzeImage = async () => {
@@ -70,12 +95,12 @@ const DisplayResultsComponent = ({ imageUri }) => {
 
       const blocks = apiResponse.data.responses[0].fullTextAnnotation.pages[0].blocks;
       const textBlocks = blocks.map(block => {
-        const blockText = block.paragraphs.map(paragraph => 
-          paragraph.words.map(word => 
+        const blockText = block.paragraphs.map(paragraph =>
+          paragraph.words.map(word =>
             word.symbols.map(symbol => symbol.text).join('')
           ).join(' ')
         ).join('\n');
-  
+
         const vertices = block.boundingBox.vertices;
         const textCoordinates = {
           minX: Math.min(...vertices.map(v => v.x)),
@@ -83,24 +108,16 @@ const DisplayResultsComponent = ({ imageUri }) => {
           minY: Math.min(...vertices.map(v => v.y)),
           maxY: Math.max(...vertices.map(v => v.y)),
         };
-  
+
         return { text: blockText, coordinates: textCoordinates };
       });
 
       // 각 텍스트 블록의 위치 정보를 사용하여 areasToHighlight를 설정합니다.
       const textAnnotations = apiResponse.data.responses[0].textAnnotations;
 
-      // 각 학기별 말풍선의 좌표 범위를 정의합니다. (예시 값입니다. 실제 좌표에 맞게 조정해야 합니다)
-      const semesterAreas = {
-        '1-1 학기': { minX: 100, maxX: 200, minY: 60, maxY: 430 },
-        '1-2 학기': { minX: 210, maxX: 310, minY: 60, maxY: 430 },
-        '2-1 학기': { minX: 320, maxX: 420, minY: 60, maxY: 980 },
-        '2-2 학기': { minX: 440, maxX: 540, minY: 60, maxY: 980 },
-        '3-1 학기': { minX: 560, maxX: 660, minY: 60, maxY: 980 },
-        '3-2 학기': { minX: 670, maxX: 770, minY: 60, maxY: 980 },
-        '41 학기': { minX: 780, maxX: 880, minY: 60, maxY: 980 },
-        '4-2 학기': { minX: 890, maxX: 1000, minY: 60, maxY: 980 },
-      };
+      // 각 학기별 말풍선의 좌표 범위를 정의
+      const semesterAreas = await fetchSemesterCoordinatesFromFirebase();
+
 
       const desiredTexts = {
         "공통 전공": true,
@@ -108,7 +125,7 @@ const DisplayResultsComponent = ({ imageUri }) => {
         "빅 데이터 전공": true,
         "게임 소프트웨어 전공": true,
       };
-      
+
       await saveTextCoordinatesToFirebase(textBlocks, desiredTexts);
       await saveSemesterCoordinatesToFirebase(textBlocks, semesterAreas);
 

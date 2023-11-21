@@ -11,7 +11,7 @@ const Major = () => {
     return (
         <SafeAreaView>
             <View>
-                asd
+                <Text>asd</Text>
             </View>
             {/* <FlatList 
                 data={data}

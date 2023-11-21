@@ -9,7 +9,7 @@ const ImageAnalzerComponent = ({ imageUri }) => {
           <View style={{ position: 'relative' }}>
             <Image
               source={{ uri: imageUri }}
-              style={{ width: 500, height: 500 }}
+              style={{ width: 400, height: 400 }}
             />
           </View>
         )}

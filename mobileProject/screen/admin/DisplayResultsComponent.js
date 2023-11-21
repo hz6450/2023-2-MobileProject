@@ -1,18 +1,51 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import { db, doc, setDoc } from "../../firebaseConfig";
 
 const DisplayResultsComponent = ({ imageUri }) => {
+  // 구글 OCR 응답에서 특정 전공의 텍스트 좌표를 찾고 Firebase에 저장하는 함수
+  const saveTextCoordinatesToFirebase = async (textBlocks, desiredTexts) => {
+    textBlocks.forEach(block => {
+      const text = block.text;
+      Object.keys(desiredTexts).forEach(desiredText => {
+        if (text.includes(desiredText)) {
+          const { minX, minY, maxX, maxY } = block.coordinates;
+          const textCoordinates = { minX, minY, maxX, maxY };
+  
+          const textDocRef = doc(db, 'ocr', desiredText);
+          setDoc(textDocRef, textCoordinates, { merge: true });
+  
+          delete desiredTexts[desiredText];
+        }
+      });
+    });
+  };
+  
+  const saveSemesterCoordinatesToFirebase = async (textBlocks, semesterAreas) => {
+    textBlocks.forEach(block => {
+      const text = block.text;
+      for (const semester in semesterAreas) {
+        if (text.includes(semester)) {
+          const { minX, minY, maxX, maxY } = block.coordinates;
+          const semesterCoordinates = { minX, minY, maxX, maxY };
+  
+          const semesterDocRef = doc(db, 'ocr', semester);
+          setDoc(semesterDocRef, semesterCoordinates, { merge: true });
+          break; // 일치하는 학기를 찾았으면 더 이상 순회하지 않습니다.
+        }
+      }
+    });
+  };
 
   const analyzeImage = async () => {
     if (!imageUri) {
-        alert("첫 번째 이미지를 선택해주세요!");
-        return;
+      alert("첫 번째 이미지를 선택해주세요!");
+      return;
     }
-      try {
-      
+    try {
+
       // 이미지 파일을 base64 형태로 전송
       const base64ImageData = await FileSystem.readAsStringAsync(imageUri, {
         encoding: FileSystem.EncodingType.Base64,
@@ -29,28 +62,56 @@ const DisplayResultsComponent = ({ imageUri }) => {
         ],
       };
 
-    // 구글 OCR
-    const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${process.env.EXPO_PUBLIC_apiKey}`;
+      // 구글 OCR
+      const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${process.env.EXPO_PUBLIC_apiKey}`;
 
       const apiResponse = await axios.post(apiURL, requestData);
       const detectedText = apiResponse.data.responses[0].fullTextAnnotation.text;
 
-      // 각 학기별 말풍선의 좌표 범위를 정의합니다. (예시 값입니다. 실제 좌표에 맞게 조정해야 합니다)
-      const semesterAreas = {
-        '1-1학기': { minX: 100, maxX: 200, minY: 60, maxY: 430 },
-        '1-2학기': { minX: 210, maxX: 310, minY: 60, maxY: 430 },
-        '2-1학기': { minX: 320, maxX: 420, minY: 60, maxY: 980 },
-        '2-2학기': { minX: 440, maxX: 540, minY: 60, maxY: 980 },
-        '3-1학기': { minX: 560, maxX: 660, minY: 60, maxY: 980 },
-        '3-2학기': { minX: 670, maxX: 770, minY: 60, maxY: 980 },
-        '4-1학기': { minX: 780, maxX: 880, minY: 60, maxY: 980 },
-        '4-2학기': { minX: 890, maxX: 1000, minY: 60, maxY: 980 },
-      };
+      const blocks = apiResponse.data.responses[0].fullTextAnnotation.pages[0].blocks;
+      const textBlocks = blocks.map(block => {
+        const blockText = block.paragraphs.map(paragraph => 
+          paragraph.words.map(word => 
+            word.symbols.map(symbol => symbol.text).join('')
+          ).join(' ')
+        ).join('\n');
+  
+        const vertices = block.boundingBox.vertices;
+        const textCoordinates = {
+          minX: Math.min(...vertices.map(v => v.x)),
+          maxX: Math.max(...vertices.map(v => v.x)),
+          minY: Math.min(...vertices.map(v => v.y)),
+          maxY: Math.max(...vertices.map(v => v.y)),
+        };
+  
+        return { text: blockText, coordinates: textCoordinates };
+      });
 
       // 각 텍스트 블록의 위치 정보를 사용하여 areasToHighlight를 설정합니다.
       const textAnnotations = apiResponse.data.responses[0].textAnnotations;
 
-      let areasToHighlight = [];
+      // 각 학기별 말풍선의 좌표 범위를 정의합니다. (예시 값입니다. 실제 좌표에 맞게 조정해야 합니다)
+      const semesterAreas = {
+        '1-1 학기': { minX: 100, maxX: 200, minY: 60, maxY: 430 },
+        '1-2 학기': { minX: 210, maxX: 310, minY: 60, maxY: 430 },
+        '2-1 학기': { minX: 320, maxX: 420, minY: 60, maxY: 980 },
+        '2-2 학기': { minX: 440, maxX: 540, minY: 60, maxY: 980 },
+        '3-1 학기': { minX: 560, maxX: 660, minY: 60, maxY: 980 },
+        '3-2 학기': { minX: 670, maxX: 770, minY: 60, maxY: 980 },
+        '41 학기': { minX: 780, maxX: 880, minY: 60, maxY: 980 },
+        '4-2 학기': { minX: 890, maxX: 1000, minY: 60, maxY: 980 },
+      };
+
+      const desiredTexts = {
+        "공통 전공": true,
+        "컴퓨터 공학 전공": true,
+        "빅 데이터 전공": true,
+        "게임 소프트웨어 전공": true,
+      };
+      
+      await saveTextCoordinatesToFirebase(textBlocks, desiredTexts);
+      await saveSemesterCoordinatesToFirebase(textBlocks, semesterAreas);
+
       let sortedTexts = {};
       for (const semester in semesterAreas) {
         sortedTexts[semester] = [];
@@ -118,7 +179,6 @@ const DisplayResultsComponent = ({ imageUri }) => {
     }
   };
 
-  
   const processTextBlocks = (textBlocks) => {
     const processedTexts = [];
 
@@ -146,16 +206,16 @@ const DisplayResultsComponent = ({ imageUri }) => {
 };
 
 const styles = StyleSheet.create({
-    button: {
-      backgroundColor: '#DDDDDD',
-      padding: 10,
-      marginBottom: 10,
-      marginTop: 20,
-    },
-    text: {
-      fontSize: 20,
-      fontWeight: 'bold',
-    },
-  });
-  
-  export default DisplayResultsComponent;
+  button: {
+    backgroundColor: '#DDDDDD',
+    padding: 10,
+    marginBottom: 10,
+    marginTop: 20,
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+});
+
+export default DisplayResultsComponent;

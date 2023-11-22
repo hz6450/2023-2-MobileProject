@@ -33,13 +33,7 @@ const HomeScreen = ({ route, navigation }) => {
   };
 
   const handleLogout = () => {
-    // 로그아웃 로직을 구현하세요.
-    // 예를 들어, 사용자의 세션을 종료하거나 토큰을 제거합니다.
 
-    // 로그인 화면으로 돌아가기
-    
-    // 대시보드 형태로 졸업요건, 이수학점, 필요학점, 봉사시간 등을 표시
-    // 세부이수학점 페이지를 만들어 교양 및 전공선택, 전공필수의 세부정보 확인
     navigation.navigate('Login');
   };
 
@@ -103,45 +97,65 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     padding: 20,
+    backgroundColor: '#f0f0f0', // 전체 배경색 변경
   },
-    dashboard: {
-      width: '100%',
-      alignItems: 'center',
-      justifyContent: 'space-around',
-      marginBottom: 20,
+  dashboard: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    marginBottom: 20,
+    backgroundColor: '#ffffff', // 대시보드 배경색 변경
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
     },
-    chartContainer: {
-      width: screenWidth - 40,
-      borderWidth: 2,
-      borderColor: '#000',
-      borderRadius: 10,
-      padding: 10,
-      marginBottom: 20,
-    },
-    infoContainer: {
-      width: screenWidth - 40,
-      borderWidth: 2,
-      borderColor: '#000',
-      borderRadius: 10,
-      padding: 10,
-      alignItems: 'center',
-    },
-    infoText: {
-      fontSize: 16,
-      marginVertical: 5,
-      // 추가적인 텍스트 스타일링
-    },
-    infoTextRed: {
-      fontSize: 16,
-      marginVertical: 5,
-      color: 'red', // 빨간색으로 표시
-      // 기타 스타일링...
-    },
-    title: {
-      fontSize: 20,
-      marginBottom: 20,
-    },
-    // 기존의 buttonContainer 및 기타 필요한 스타일 정의
-  });
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  chartContainer: {
+    width: screenWidth - 40,
+    borderWidth: 1,
+    borderColor: '#e0e0e0', // 테두리 색상 변경
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 20,
+    backgroundColor: '#fff',
+  },
+  infoContainer: {
+    width: screenWidth - 40,
+    borderWidth: 1,
+    borderColor: '#e0e0e0', // 테두리 색상 변경
+    borderRadius: 10,
+    padding: 10,
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  infoText: {
+    fontSize: 18,
+    marginVertical: 5,
+    color: '#333', // 기본 텍스트 색상 변경
+  },
+  infoTextRed: {
+    fontSize: 18,
+    marginVertical: 5,
+    color: '#d32f2f', // 강조 텍스트 색상 변경
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+    fontWeight: 'bold',
+    color: '#333', // 제목 텍스트 색상 변경
+  },
+  button: {
+    backgroundColor: '#4caf50', // 버튼 배경색 변경
+    color: '#fff', // 버튼 텍스트 색상 변경
+    padding: 10,
+    borderRadius: 5,
+  },
+  // 기타 필요한 스타일 정의
+});
+
   
   export default HomeScreen;

@@ -21,6 +21,7 @@ const Login = ({ navigation }) => {
         if (password === userPassword) {
           // 패스워드가 일치하면 로그인 성공 처리를 합니다.
           Alert.alert('로그인 성공', '로그인에 성공했습니다!');
+          
           navigation.navigate('Home', { studentId: email });
         } else {
           // 패스워드가 일치하지 않으면 사용자에게 알립니다.

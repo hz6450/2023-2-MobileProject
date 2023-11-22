@@ -28,10 +28,20 @@ function MainTabNavigator() {
 function App() {
   return (
     <NavigationContainer>
+<<<<<<< HEAD
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={MainTabNavigator} />
         <Stack.Screen name="Ocr" component={Ocr} options={{ title: 'OCR 페이지' }} />
+=======
+      <Stack.Navigator initialRouteName="Login">
+      <Stack.Screen name="Ocr" component={Ocr} options={{ title: 'Ocr 페이지' }} /> 
+        <Stack.Screen name="Login" component={LoginScreen} options={{ title: '로그인' }} />
+        <Stack.Screen name="Home" component={HomeScreen} options={{ title: '메인페이지' }} />
+        <Stack.Screen name="Profile" component={Profile} options={{ title: '프로필 페이지' }} />
+        <Stack.Screen name="DetailCredit" component={DetailCredit} options={{ title: '세부이수학점 페이지' }} />
+        <Stack.Screen name="Major" component={Major} options={{ title: '전공' }} />
+>>>>>>> aca2d9f307efa4c192f67674305ff00363dfea39
       </Stack.Navigator>
     </NavigationContainer>
   );

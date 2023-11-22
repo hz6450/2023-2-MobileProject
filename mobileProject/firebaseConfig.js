@@ -38,7 +38,11 @@ const firebaseConfig = {
   projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
   storageBucket: process.env.EXPO_PUBLIC_STORAGE_BUCKET,
   messagingSenderId: process.env.EXPO_PUBLIC_MESSAGING_SENDER_ID,
+<<<<<<< HEAD
   appId: process.env.EXPO_PUBLIC_APP_ID,
+=======
+  appId: process.env.EXPO_PUBLIC_APP_ID
+>>>>>>> aca2d9f307efa4c192f67674305ff00363dfea39
 };
 
 const app = initializeApp(firebaseConfig);

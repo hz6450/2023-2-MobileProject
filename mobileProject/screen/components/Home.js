@@ -32,10 +32,6 @@ const HomeScreen = ({ route, navigation }) => {
     },
   };
 
-  const handleLogout = () => {
-
-    navigation.navigate('Login');
-  };
 
   const navigateToProfile = () => {
     navigation.navigate('Profile' ,  { studentId: studentId });
@@ -86,7 +82,6 @@ const HomeScreen = ({ route, navigation }) => {
       <Button title="프로필 페이지" onPress={navigateToProfile} />
       <Button title="OCR" onPress={navigateToOCR} />
       <Button title="세부이수학점 페이지" onPress={navigateToDetailCredit} />
-      <Button title="로그아웃" onPress={handleLogout} />
     </View>
   );
 };

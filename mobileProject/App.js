@@ -13,7 +13,9 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function TabNavigator() {
+function TabNavigator({ route }) {
+
+  const { studentId } = route.params;
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -31,13 +33,16 @@ function TabNavigator() {
 
           return <MaterialIcons name={iconName} size={size} color={color} />;
         },
+        tabBarActiveTintColor: 'tomato', // 활성 탭의 색상
+        tabBarInactiveTintColor: 'gray',  // 비활성 탭의 색상
       })}
-      tabBarOptions={{
-        activeTintColor: 'tomato',
-        inactiveTintColor: 'gray',
-      }}
     >
-      <Tab.Screen name="Home" component={HomeScreen} options={{ title: '메인페이지' }} />
+      <Tab.Screen 
+        name="Home" 
+        component={HomeScreen} 
+        initialParams={{ studentId: studentId }}
+        options={{ title: '메인 페이지' }}
+      />
       <Tab.Screen name="Profile" component={Profile} options={{ title: '프로필 페이지' }} />
       <Tab.Screen name="DetailCredit" component={DetailCredit} options={{ title: '세부이수학점 페이지' }} />
     </Tab.Navigator>
@@ -52,7 +57,12 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="MainTab" component={TabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen 
+          name="MainTab" 
+          component={TabNavigator} 
+          options={{ headerShown: false }}
+          initialParams={{ studentId: 1234 }}  // 예시 studentId
+        />
         <Stack.Screen name="Ocr" component={Ocr} />
       </Stack.Navigator>
     </NavigationContainer>

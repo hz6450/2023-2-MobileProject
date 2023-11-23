@@ -6,6 +6,13 @@ import * as FileSystem from 'expo-file-system';
 import { db, doc, setDoc } from '../../firebaseConfig';
 
 const ImagePickerComponent = ({ onImagePicked, setProcessing, setOcrComplete }) => {
+  
+  // '1-1 학기' 같은 문자열이 포함된 경우 인식
+  const semesters = ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '4-1', '4-2', '41'];
+  
+  // 위와 마찬가지
+  const desiredTexts = ["공통 전공", "게임 소프트웨어 전공", "빅 데이터 전공", "컴퓨터 공학 전공"];
+  
   const pickImage = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -24,7 +31,7 @@ const ImagePickerComponent = ({ onImagePicked, setProcessing, setOcrComplete }) 
   };
 
   const processImageForOcr = async (imageUri) => {
-    setProcessing(true); // Indicate processing is ongoing
+    setProcessing(true);
     const base64ImageData = await FileSystem.readAsStringAsync(imageUri, {
       encoding: FileSystem.EncodingType.Base64,
     });
@@ -50,37 +57,51 @@ const ImagePickerComponent = ({ onImagePicked, setProcessing, setOcrComplete }) 
         const blockText = block.paragraphs.map(paragraph =>
           paragraph.words.map(word => word.symbols.map(symbol => symbol.text).join('')).join(' ')
         ).join('\n');
-
-        if (blockText.includes('1-1 학기') || blockText.includes('1-2 학기') ||
-            blockText.includes('2-1 학기') || blockText.includes('2-2 학기') ||
-            blockText.includes('3-1 학기') || blockText.includes('3-2 학기') ||
-            blockText.includes('4-1 학기') || blockText.includes('4-2 학기')) {
-              const vertices = block.boundingBox.vertices;
-              const textCoordinates = {
-                minX: Math.min(...vertices.map(v => v.x)),
-                maxX: Math.max(...vertices.map(v => v.x)),
-                minY: Math.min(...vertices.map(v => v.y)),
-                maxY: Math.max(...vertices.map(v => v.y)),
-              };
-    
-              const semester = blockText.match(/1-1 학기|1-2 학기|2-1 학기|2-2 학기|3-1 학기|3-2 학기|4-1 학기|4-2 학기/)[0];
-              const semesterDocRef = doc(db, 'ocr', semester);
-              await setDoc(semesterDocRef, textCoordinates, { merge: true });
-              foundSemesterText = true;
-            }
-          }
+  
+        const matchedSemester = semesters.find(semester => blockText.includes(semester));
+        
+        const matchedText = desiredTexts.find(text => blockText.includes(text));
+      
+        
+        if (matchedSemester) {
+          const vertices = block.boundingBox.vertices;
+          const textCoordinates = {
+            minX: Math.min(...vertices.map(v => v.x)),
+            maxX: Math.max(...vertices.map(v => v.x)),
+            minY: Math.min(...vertices.map(v => v.y)),
+            maxY: Math.max(...vertices.map(v => v.y)),
+          };
+  
+          const semesterDocRef = doc(db, 'ocr', matchedSemester);
+          await setDoc(semesterDocRef, textCoordinates, { merge: true });
+          foundSemesterText = true;
+        }
+        if (matchedText) {
+          const vertices = block.boundingBox.vertices;
+          const textCoordinates = {
+            minX: Math.min(...vertices.map(v => v.x)),
+            maxX: Math.max(...vertices.map(v => v.x)),
+            minY: Math.min(...vertices.map(v => v.y)),
+            maxY: Math.max(...vertices.map(v => v.y)),
+          };
+  
+          const textDocRef = doc(db, 'ocr', matchedText);
+          await setDoc(textDocRef, textCoordinates, { merge: true });
+          foundDesiredText = true; // 상태 업데이트
+        }
+      }
     
           if (!foundSemesterText) {
             Alert.alert("올바른 사진을 업로드해주세요.");
-            onImagePicked(null); // Reset the image URI
+            onImagePicked(null);
           } else {
-            setOcrComplete(true); // Indicate that OCR processing is complete
+            setOcrComplete(true);
           }
         } catch (error) {
           console.error("OCR 처리 중 에러 발생: ", error);
           Alert.alert("OCR 처리 중 에러 발생.");
         } finally {
-          setProcessing(false); // Processing is done
+          setProcessing(false);
         }
       };
     

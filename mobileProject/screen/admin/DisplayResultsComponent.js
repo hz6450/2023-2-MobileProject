@@ -23,29 +23,12 @@ const DisplayResultsComponent = ({ imageUri }) => {
     });
   };
 
-  // 1-1학기~ 4-2학기 까지
-  const saveSemesterCoordinatesToFirebase = async (textBlocks, semesterAreas) => {
-    textBlocks.forEach(block => {
-      const text = block.text;
-      for (const semester in semesterAreas) {
-        if (text.includes(semester)) {
-          const { minX, minY, maxX, maxY } = block.coordinates;
-          const semesterCoordinates = { minX, minY, maxX, maxY };
-
-          const semesterDocRef = doc(db, 'ocr', semester);
-          setDoc(semesterDocRef, semesterCoordinates, { merge: true });
-          break; // 일치하는 학기를 찾았으면 더 이상 순회하지 않습니다.
-        }
-      }
-    });
-  };
-
   // Firebase에서 학기별 좌표를 불러오는 함수
   const fetchSemesterCoordinatesFromFirebase = async () => {
     const semesterCoordinates = {};
 
     // 각 학기별로 Firestore에서 좌표 데이터를 조회합니다.
-    for (const semester of ['1-1 학기', '1-2 학기', '2-1 학기', '2-2 학기', '3-1 학기', '3-2 학기', '41 학기', '4-2 학기']) {
+    for (const semester of ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '41', '4-1', '4-2']) {
       const semesterDocRef = doc(db, 'ocr', semester);
       const docSnap = await getDoc(semesterDocRef);
 
@@ -112,6 +95,8 @@ const DisplayResultsComponent = ({ imageUri }) => {
         return { text: blockText, coordinates: textCoordinates };
       });
 
+      console.log(textBlocks);
+
       // 각 텍스트 블록의 위치 정보를 사용하여 areasToHighlight를 설정합니다.
       const textAnnotations = apiResponse.data.responses[0].textAnnotations;
 
@@ -127,7 +112,7 @@ const DisplayResultsComponent = ({ imageUri }) => {
       };
 
       await saveTextCoordinatesToFirebase(textBlocks, desiredTexts);
-      await saveSemesterCoordinatesToFirebase(textBlocks, semesterAreas);
+      // await saveSemesterCoordinatesToFirebase(textBlocks, semesterAreas);
 
       let sortedTexts = {};
       for (const semester in semesterAreas) {

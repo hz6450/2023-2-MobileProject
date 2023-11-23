@@ -5,11 +5,11 @@ import { db, doc, getDoc } from '../../firebaseConfig';
 const Profile = ({ route, navigation }) => {
   const [userInfo, setUserInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const studentId = route.params?.studentId || '기본값';
+  const  studentId  = route.params?.studentId || '기본값';
 
   const handleLogout = () => {
     // 로그아웃 로직 구현
-    // 예: 사용자 세션 종료, 인증 토큰 제거 등
+    // 예: 사용자 세션 종료, 인증 토큰 제거 등  
 
     // 로그인 화면으로 이동
     navigation.navigate('Login');
@@ -55,6 +55,7 @@ const Profile = ({ route, navigation }) => {
         </>
       )}
       <Button title="로그아웃" onPress={handleLogout} />
+      {console.log('studentId:', studentId, typeof studentId)}
     </View>
   );
 };

@@ -15,7 +15,7 @@ const Tab = createBottomTabNavigator();
 
 function TabNavigator({ route }) {
 
-  const { studentId } = route.params;
+  const studentId = route.params?.studentId.toString();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -41,9 +41,12 @@ function TabNavigator({ route }) {
         name="Home" 
         component={HomeScreen} 
         initialParams={{ studentId: studentId }}
-        options={{ title: '메인 페이지' }}
       />
-      <Tab.Screen name="Profile" component={Profile} options={{ title: '프로필 페이지' }} />
+      <Tab.Screen 
+        name="Profile" 
+        component={Profile} 
+        initialParams={{ studentId: studentId }}
+      />
       <Tab.Screen name="DetailCredit" component={DetailCredit} options={{ title: '세부이수학점 페이지' }} />
     </Tab.Navigator>
   );

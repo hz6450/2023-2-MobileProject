@@ -5,14 +5,7 @@ import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import { db, doc, setDoc } from '../../firebaseConfig';
 
-const ImagePickerComponent = ({ onImagePicked, setProcessing, setOcrComplete }) => {
-  
-  // '1-1 학기' 같은 문자열이 포함된 경우 인식
-  const semesters = ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '4-1', '4-2', '41'];
-  
-  // 위와 마찬가지
-  const desiredTexts = ["공통 전공", "게임 소프트웨어 전공", "빅 데이터 전공", "컴퓨터 공학 전공"];
-  
+const ImagePickerComponent = ({ onImagePicked, setProcessing, setOcrComplete, semesters, desiredTexts }) => {
   const pickImage = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({

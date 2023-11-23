@@ -4,31 +4,14 @@ import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import { db, doc, setDoc, getDoc } from "../../firebaseConfig";
 
-const DisplayResultsComponent = ({ imageUri }) => {
-  // 구글 OCR 응답에서 특정 전공의 텍스트 좌표를 찾고 Firebase에 저장하는 함수
-  const saveTextCoordinatesToFirebase = async (textBlocks, desiredTexts) => {
-    textBlocks.forEach(block => {
-      const text = block.text;
-      Object.keys(desiredTexts).forEach(desiredText => {
-        if (text.includes(desiredText)) {
-          const { minX, minY, maxX, maxY } = block.coordinates;
-          const textCoordinates = { minX, minY, maxX, maxY };
-
-          const textDocRef = doc(db, 'ocr', desiredText);
-          setDoc(textDocRef, textCoordinates, { merge: true });
-
-          delete desiredTexts[desiredText];
-        }
-      });
-    });
-  };
+const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts }) => {
 
   // Firebase에서 학기별 좌표를 불러오는 함수
   const fetchSemesterCoordinatesFromFirebase = async () => {
     const semesterCoordinates = {};
 
     // 각 학기별로 Firestore에서 좌표 데이터를 조회합니다.
-    for (const semester of ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '41', '4-1', '4-2']) {
+    for (const semester of semesters) {
       const semesterDocRef = doc(db, 'ocr', semester);
       const docSnap = await getDoc(semesterDocRef);
 
@@ -45,6 +28,29 @@ const DisplayResultsComponent = ({ imageUri }) => {
     }
 
     return semesterCoordinates;
+  };
+
+  // Firebase에서 전공별 좌표를 불러오는 함수
+  const fetchDesiredTextsCoordinatesFirebase = async () => {
+    const desiredTextCoordinates = {};
+
+    // 각 학기별로 Firestore에서 좌표 데이터를 조회합니다.
+    for (const desiredText of desiredTexts) {
+      const semesterDocRef = doc(db, 'ocr', desiredText);
+      const docSnap = await getDoc(semesterDocRef);
+
+      if (docSnap.exists()) {
+        const { minY } = docSnap.data();
+        // 좌표 값을 조정합니다.
+        desiredTextCoordinates[desiredText] = {
+          first: 0,
+          minY: minY - 50,
+          maxY: 980 // maxY는 항상 980으로 고정
+        };
+      }
+    }
+
+    return desiredTextCoordinates;
   };
 
   const analyzeImage = async () => {
@@ -76,55 +82,26 @@ const DisplayResultsComponent = ({ imageUri }) => {
       const apiResponse = await axios.post(apiURL, requestData);
       const detectedText = apiResponse.data.responses[0].fullTextAnnotation.text;
 
-      const blocks = apiResponse.data.responses[0].fullTextAnnotation.pages[0].blocks;
-      const textBlocks = blocks.map(block => {
-        const blockText = block.paragraphs.map(paragraph =>
-          paragraph.words.map(word =>
-            word.symbols.map(symbol => symbol.text).join('')
-          ).join(' ')
-        ).join('\n');
-
-        const vertices = block.boundingBox.vertices;
-        const textCoordinates = {
-          minX: Math.min(...vertices.map(v => v.x)),
-          maxX: Math.max(...vertices.map(v => v.x)),
-          minY: Math.min(...vertices.map(v => v.y)),
-          maxY: Math.max(...vertices.map(v => v.y)),
-        };
-
-        return { text: blockText, coordinates: textCoordinates };
-      });
-
-      console.log(textBlocks);
-
       // 각 텍스트 블록의 위치 정보를 사용하여 areasToHighlight를 설정합니다.
       const textAnnotations = apiResponse.data.responses[0].textAnnotations;
 
       // 각 학기별 말풍선의 좌표 범위를 정의
       const semesterAreas = await fetchSemesterCoordinatesFromFirebase();
+      const desiredTextCoordinates = await fetchDesiredTextsCoordinatesFirebase();
 
-
-      const desiredTexts = {
-        "공통 전공": true,
-        "컴퓨터 공학 전공": true,
-        "빅 데이터 전공": true,
-        "게임 소프트웨어 전공": true,
-      };
-
-      await saveTextCoordinatesToFirebase(textBlocks, desiredTexts);
-      // await saveSemesterCoordinatesToFirebase(textBlocks, semesterAreas);
-
-      let sortedTexts = {};
-      for (const semester in semesterAreas) {
-        sortedTexts[semester] = [];
+      // 각 학기별로 텍스트 블록을 그룹화하기 위한 초기 구조를 설정합니다.
+      let sortedTextsByGroup = {};
+      for (const semester of semesters) {
+        sortedTextsByGroup[semester] = {};
+        for (let i = 0; i <= desiredTexts.length; i++) {
+          sortedTextsByGroup[semester][`group${i + 1}`] = [];
+        }
       }
 
-      // 각 학기별 영역에 맞는지 확인하고 텍스트 블록 묶기
+      // 각 학기별 말풍선의 좌표 범위에 따라 텍스트 블록을 그룹화합니다.
       textAnnotations.forEach((annotation, index) => {
-        // 첫 번째 항목(전체 텍스트)은 건너뜁니다.
-        if (index === 0) return;
+        if (index === 0) return; // 전체 텍스트는 건너뜁니다.
 
-        // 각 꼭지점의 좌표를 기반으로 블록의 최소/최대 x, y 좌표를 계산합니다.
         const vertices = annotation.boundingPoly.vertices;
         const textBlock = {
           text: annotation.description,
@@ -134,25 +111,32 @@ const DisplayResultsComponent = ({ imageUri }) => {
           maxY: Math.max(...vertices.map(v => v.y)),
         };
 
-        // 각 학기별 영역에 맞는지 확인합니다.
+        // 각 학기별 좌표 범위에 맞는지 확인하고, 해당하는 그룹에 텍스트 블록을 할당합니다.
         for (const semester in semesterAreas) {
           const area = semesterAreas[semester];
           if (
             textBlock.minX >= area.minX && textBlock.maxX <= area.maxX &&
             textBlock.minY >= area.minY && textBlock.maxY <= area.maxY
           ) {
+            // Y 좌표에 따라 해당하는 그룹을 찾습니다.
+            let groupIndex = 0;
+            while (groupIndex < desiredTexts.length && textBlock.minY > desiredTextCoordinates[desiredTexts[groupIndex]].minY) {
+              groupIndex++;
+            }
+
             // 같은 라인에 있는 텍스트 블록을 결합합니다.
             let addedToLine = false;
-            for (const existingBlock of sortedTexts[semester]) {
+            for (const existingBlock of sortedTextsByGroup[semester][`group${groupIndex + 1}`]) {
               if (isSameLine(textBlock, existingBlock)) {
                 existingBlock.text += ` ${textBlock.text}`;
                 addedToLine = true;
                 break;
               }
             }
+
             // 만약 현재 블록이 기존 라인에 추가되지 않았다면 새 라인으로 추가합니다.
             if (!addedToLine) {
-              sortedTexts[semester].push(textBlock);
+              sortedTextsByGroup[semester][`group${groupIndex + 1}`].push(textBlock);
             }
             break;
           }
@@ -160,15 +144,18 @@ const DisplayResultsComponent = ({ imageUri }) => {
       });
 
       // Firestore에 저장하기 전에 각 학기별로 텍스트 블록을 처리합니다.
-      for (const semester in sortedTexts) {
-        sortedTexts[semester] = processTextBlocks(sortedTexts[semester]);
+      for (const semester in sortedTextsByGroup) {
+        for (const group in sortedTextsByGroup[semester]) {
+          sortedTextsByGroup[semester][group] = processTextBlocks(sortedTextsByGroup[semester][group]);
+        }
       }
 
-      // Firestore에 학기별로 추출된 텍스트를 저장하는 부분을 수정합니다.
-      for (const semester in sortedTexts) {
+
+      // Firestore에 학기별로 그룹화된 텍스트 블록을 저장합니다.
+      for (const semester in sortedTextsByGroup) {
         const ocrDocRef = doc(db, 'ocr', semester);
         await setDoc(ocrDocRef, {
-          detectedText: sortedTexts[semester], // 텍스트 블록을 배열로 저장합니다.
+          groups: sortedTextsByGroup[semester],
           imageUri,
         }, { merge: true });
       }

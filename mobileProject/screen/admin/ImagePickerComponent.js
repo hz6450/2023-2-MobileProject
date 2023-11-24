@@ -5,7 +5,7 @@ import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import { db, doc, setDoc } from '../../firebaseConfig';
 
-const ImagePickerComponent = ({ onImagePicked, setProcessing, setOcrComplete, semesters, desiredTexts }) => {
+const ImagePickerComponent = ({ onImagePicked, setProcessing, setUploadComplete, semesters, desiredTexts }) => {
   const pickImage = async () => {
     try {
       let result = await ImagePicker.launchImageLibraryAsync({
@@ -88,7 +88,7 @@ const ImagePickerComponent = ({ onImagePicked, setProcessing, setOcrComplete, se
             Alert.alert("올바른 사진을 업로드해주세요.");
             onImagePicked(null);
           } else {
-            setOcrComplete(true);
+            setUploadComplete(true);
           }
         } catch (error) {
           console.error("OCR 처리 중 에러 발생: ", error);

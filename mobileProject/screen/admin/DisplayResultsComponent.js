@@ -160,8 +160,6 @@ const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts }) => {
         }, { merge: true });
       }
 
-
-      alert(`인식된 텍스트:\n${detectedText}`);
     } catch (error) {
       console.error("이미지 analyzing 에러: ", error);
       alert('이미지 analyzing 에러. 다시 시도해주세요.');

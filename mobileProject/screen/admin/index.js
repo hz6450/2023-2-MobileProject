@@ -6,12 +6,15 @@ import DisplayResultsComponent from './DisplayResultsComponent';
 
 const Ocr = ({ navigation }) => {
   const [imageUri, setImageUri] = useState(null);
-  const [highlightedAreas, setHighlightedAreas] = useState([]);
-  const [imageSize, setImageSize] = useState({ width: 1030, height: 1008 });
   const [processing, setProcessing] = useState(false);
   const [uploadComplete, setUploadComplete] = useState(false);
   const [ocrComplete, setOcrComplete] = useState(false);
 
+  // ImagePickerComponent에서 사용될 useState를 여기로 옮깁니다.
+  const [selectedSchool, setSelectedSchool] = useState('선문대');
+  const [selectedDepartment, setSelectedDepartment] = useState('컴퓨터공학');
+  const [selectedYear, setSelectedYear] = useState('2023');
+  
   // semesters의 경우 고정값 사용
   const semesters = ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '4-1', '4-2', '41'];
 
@@ -23,7 +26,12 @@ const Ocr = ({ navigation }) => {
     setOcrComplete(true);
     navigation.navigate('OcrResultsStack', {
       screen: 'OcrResultsEditor',
-      params: { semesters: semesters },
+      params: {
+        selectedSchool: selectedSchool,
+        selectedDepartment: selectedDepartment,
+        selectedYear: selectedYear,
+        semesters: semesters
+      },
     });
   };
   
@@ -38,23 +46,26 @@ const Ocr = ({ navigation }) => {
       <ImagePickerComponent
         onImagePicked={setImageUri}
         setProcessing={setProcessing}
-        setUploadComplete={setUploadComplete}
         semesters={semesters}
         desiredTexts={desiredTexts}
+        selectedSchool={selectedSchool}
+        setSelectedSchool={setSelectedSchool}
+        selectedDepartment={selectedDepartment}
+        setSelectedDepartment={setSelectedDepartment}
+        selectedYear={selectedYear}
+        setSelectedYear={setSelectedYear}
       />
       <ImageAnalyzerComponent
         imageUri={imageUri}
-        setImageUri={setImageUri}
-        setHighlightedAreas={setHighlightedAreas}
-        setImageSize={setImageSize}
       />
       <DisplayResultsComponent
         imageUri={imageUri}
-        highlightedAreas={highlightedAreas}
-        imageSize={imageSize}
         semesters={semesters}
         desiredTexts={desiredTexts}
-        setOcrComplete={setOcrComplete}
+        setUploadComplete={setUploadComplete}
+        selectedSchool={selectedSchool}
+        selectedDepartment={selectedDepartment}
+        selectedYear={selectedYear}
       />
       {uploadComplete && (
         <TouchableOpacity

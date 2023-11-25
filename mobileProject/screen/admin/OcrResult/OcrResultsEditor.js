@@ -1,20 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert } from 'react-native';
+import {
+    View, 
+    Text, 
+    TextInput, 
+    TouchableOpacity, 
+    ScrollView, 
+    StyleSheet, 
+    Alert
+} from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { db, doc, getDoc, setDoc } from "../../../firebaseConfig";
 
-const OcrResultsEditor = ({ navigation  }) => {
-    const semesters = ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '4-1', '4-2', '41'];
+const OcrResultsEditor = ({ navigation }) => {
+    const route = useRoute();
+    const { selectedSchool, selectedDepartment, selectedYear, semesters } = route.params;
 
     const [selectedSemester, setSelectedSemester] = useState(semesters[0]);
     const [ocrData, setOcrData] = useState({});
     const [editedText, setEditedText] = useState({});
     const [editMode, setEditMode] = useState({});
-
+    
+    // 안쓰임
     useEffect(() => {
         fetchOcrData(selectedSemester);
-        // editMode 상태 초기화 로직을 제거
     }, [selectedSemester]);
 
+    // 문자 삭제
     const deleteText = (group) => {
         // 삭제 전에 사용자에게 확인을 요청합니다.
         Alert.alert(
@@ -49,8 +60,9 @@ const OcrResultsEditor = ({ navigation  }) => {
         );
     };
 
+    // firebase에서 값 가져옴
     const fetchOcrData = async (semester) => {
-        const ocrDocRef = doc(db, 'ocr', semester);
+        const ocrDocRef = doc(db, selectedSchool, selectedDepartment, selectedYear, semester);
         const docSnap = await getDoc(ocrDocRef);
 
         if (docSnap.exists()) {
@@ -59,6 +71,7 @@ const OcrResultsEditor = ({ navigation  }) => {
         }
     };
 
+    // 그룹에서 값 나누기
     const mapOcrDataToEditableText = (data) => {
         let editTextMap = {};
         Object.keys(data.groups).forEach(group => {
@@ -67,9 +80,10 @@ const OcrResultsEditor = ({ navigation  }) => {
         return editTextMap;
     };
 
+    // 변경 사항 저장용 함수
     const saveChanges = async () => {
         // Firebase 문서에서 기존의 모든 groups를 삭제합니다.
-        const ocrDocRef = doc(db, 'ocr', selectedSemester);
+        const ocrDocRef = doc(db, selectedSchool, selectedDepartment, selectedYear, selectedSemester);
         await setDoc(ocrDocRef, { groups: {} }, { merge: true });
         //await deleteField
 
@@ -85,8 +99,6 @@ const OcrResultsEditor = ({ navigation  }) => {
 
         // 새로운 groups로 덮어씁니다.
         await setDoc(ocrDocRef, { groups: newGroups }, { merge: true });
-
-        alert('변경 사항이 저장되었습니다.');
     };
 
     // 텍스트 라인을 이동시키기 위한 함수
@@ -135,9 +147,15 @@ const OcrResultsEditor = ({ navigation  }) => {
         setEditMode(prev => ({ ...prev, [key]: !prev[key] }));
     };
 
+    const changeSemesterAndSaveChanges = async (semester) => {
+        await saveChanges();  // 현재 학기의 변경 사항 저장
+        setSelectedSemester(semester);  // 새 학기 선택
+    };
+
     // 저장 버튼을 누르면 돌아가는 함수
     const saveChangesAndNavigateBack = async () => {
         await saveChanges();
+        alert('변경 사항이 저장되었습니다.');
         navigation.goBack();
     };
 
@@ -148,7 +166,7 @@ const OcrResultsEditor = ({ navigation  }) => {
                     {semesters.map(semester => (
                         <TouchableOpacity
                             key={semester}
-                            onPress={() => setSelectedSemester(semester)}
+                            onPress={() => changeSemesterAndSaveChanges(semester)}  // 변경된 부분
                             style={[styles.semesterButton, selectedSemester === semester && styles.activeButton]}
                         >
                             <Text style={styles.semesterText}>{semester}</Text>
@@ -235,6 +253,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 18,
         fontWeight: 'bold',
+        paddingBottom: 20, 
     },
     buttonRow: {
         flexDirection: 'row',

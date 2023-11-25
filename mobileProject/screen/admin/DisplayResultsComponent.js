@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import { db, doc, setDoc, getDoc } from "../../firebaseConfig";
 
-const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts }) => {
+const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts, setUploadComplete, selectedSchool, selectedDepartment, selectedYear }) => {
 
   // Firebase에서 학기별 좌표를 불러오는 함수
   const fetchSemesterCoordinatesFromFirebase = async () => {
@@ -12,7 +12,7 @@ const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts }) => {
 
     // 각 학기별로 Firestore에서 좌표 데이터를 조회합니다.
     for (const semester of semesters) {
-      const semesterDocRef = doc(db, 'ocr', semester);
+      const semesterDocRef = doc(db, selectedSchool, selectedDepartment, selectedYear, semester);
       const docSnap = await getDoc(semesterDocRef);
 
       if (docSnap.exists()) {
@@ -36,7 +36,7 @@ const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts }) => {
 
     // 각 학기별로 Firestore에서 좌표 데이터를 조회합니다.
     for (const desiredText of desiredTexts) {
-      const semesterDocRef = doc(db, 'ocr', desiredText);
+      const semesterDocRef = doc(db, selectedSchool, selectedDepartment, selectedYear, desiredText);
       const docSnap = await getDoc(semesterDocRef);
 
       if (docSnap.exists()) {
@@ -59,7 +59,7 @@ const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts }) => {
       return;
     }
     try {
-
+      setUploadComplete(false);
       // 이미지 파일을 base64 형태로 전송
       const base64ImageData = await FileSystem.readAsStringAsync(imageUri, {
         encoding: FileSystem.EncodingType.Base64,
@@ -80,7 +80,6 @@ const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts }) => {
       const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${process.env.EXPO_PUBLIC_apiKey}`;
 
       const apiResponse = await axios.post(apiURL, requestData);
-      const detectedText = apiResponse.data.responses[0].fullTextAnnotation.text;
 
       // 각 텍스트 블록의 위치 정보를 사용하여 areasToHighlight를 설정합니다.
       const textAnnotations = apiResponse.data.responses[0].textAnnotations;
@@ -153,12 +152,15 @@ const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts }) => {
 
       // Firestore에 학기별로 그룹화된 텍스트 블록을 저장합니다.
       for (const semester in sortedTextsByGroup) {
-        const ocrDocRef = doc(db, 'ocr', semester);
+        const ocrDocRef = doc(db, selectedSchool, selectedDepartment, selectedYear, semester);
         await setDoc(ocrDocRef, {
           groups: sortedTextsByGroup[semester],
           imageUri,
         }, { merge: true });
       }
+
+      // 이미지 분석이 성공적으로 완료되면, setUploadComplete를 true로 설정합니다.
+      setUploadComplete(true);
 
     } catch (error) {
       console.error("이미지 analyzing 에러: ", error);

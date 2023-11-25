@@ -1,5 +1,11 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  getFirestore, 
+  doc, 
+  getDoc, 
+  setDoc,
+  collection,
+} from "firebase/firestore";
 
 // // 이해준
 // const firebaseConfig = {
@@ -45,4 +51,4 @@ const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
-export { db, doc, getDoc, setDoc };
+export { db, doc, getDoc, setDoc, collection };

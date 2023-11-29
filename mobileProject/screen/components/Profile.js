@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Button, ActivityIndicator, TouchableOpacity} from 'react-native';
 import { db, doc, getDoc } from '../../firebaseConfig';
 
 const Profile = ({ route, navigation }) => {
@@ -13,6 +13,21 @@ const Profile = ({ route, navigation }) => {
 
     // 로그인 화면으로 이동
     navigation.navigate('Login');
+  };
+
+  const renderMajorClassification = (classification) => {
+    switch (classification) {
+      case 1:
+        return '전공심화';
+      case 2:
+        return '복수전공';
+      case 3:
+        return '부전공';
+      case 4:
+        return 'e-special';
+      default:
+        return '분류 없음'; // 만약 해당하지 않는 값이 들어올 경우
+    }
   };
 
   useEffect(() => {
@@ -45,17 +60,19 @@ const Profile = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>프로필</Text>
-      {userInfo && (
-        <>
-          <Text style={styles.info}>이름: {userInfo.name}</Text>
-          <Text style={styles.info}>전공: {userInfo.major}</Text>
-          <Text style={styles.info}>전공 분류: {userInfo.MajorClassification}</Text>
-          <Text style={styles.info}>학년: {userInfo.grade}</Text>
-          {/* 필요하다면 추가적인 사용자 정보를 여기에 표시할 수 있습니다. */}
-        </>
-      )}
-      <Button title="로그아웃" onPress={handleLogout} />
-      {console.log('studentId:', studentId, typeof studentId)}
+      <View style={styles.card}>
+        {userInfo && (
+          <>
+            <Text style={styles.info}>이름: {userInfo.name}</Text>
+            <Text style={styles.info}>전공: {userInfo.major}</Text>
+            <Text style={styles.info}>전공 분류: {renderMajorClassification(userInfo.MajorClassification)}</Text>
+            <Text style={styles.info}>학년: {userInfo.grade}</Text>
+          </>
+        )}
+      </View>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutButtonText}>로그아웃</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -66,17 +83,47 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
+    backgroundColor: '#f0f0f0', // 배경색 변경
   },
   title: {
-    fontSize: 20,
-    marginBottom: 20,
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333', // 제목 색상 변경
+    marginBottom: 30,
   },
   info: {
-    fontSize: 16,
+    fontSize: 18,
+    color: '#555', // 정보 텍스트 색상 변경
     marginBottom: 10,
   },
-  // 추가적인 스타일을 여기에 정의할 수 있습니다.
+  card: {
+    backgroundColor: '#fff', // 카드 배경색
+    width: '90%', // 카드 너비
+    padding: 20,
+    borderRadius: 10,
+    shadowColor: "#000", // 그림자 색상
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginBottom: 30,
+  },
+  logoutButton: {
+    backgroundColor: '#d9534f', // 버튼 배경색 변경
+    padding: 15,
+    borderRadius: 8,
+    width: '90%',
+  },
+  logoutButtonText: {
+    color: '#fff', // 버튼 텍스트 색상 변경
+    textAlign: 'center',
+    fontSize: 16,
+  },
 });
+
 
 
 export default Profile;

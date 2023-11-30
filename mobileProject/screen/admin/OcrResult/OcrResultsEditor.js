@@ -8,7 +8,7 @@ import {
     StyleSheet, 
     Alert
 } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import { db, doc, getDoc, setDoc } from "../../../firebaseConfig";
 
 const OcrResultsEditor = ({ navigation }) => {

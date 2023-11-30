@@ -7,11 +7,14 @@ import Profile from './screen/components/Profile';
 import DetailCredit from './screen/components/DetailCredit';
 import LoginScreen from './screen/Auth/Login';
 import Ocr from './screen/admin/index';
+import OcrResultsEditor from './screen/admin/OcrResult/OcrResultsEditor';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+const OcrResultsStack = createNativeStackNavigator();
 
 function TabNavigator({ route }) {
 
@@ -21,7 +24,6 @@ function TabNavigator({ route }) {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-
           if (route.name === 'Home') {
             iconName = 'home';
           } else if (route.name === 'Profile') {
@@ -30,7 +32,6 @@ function TabNavigator({ route }) {
             iconName = 'search';
           }
           // ... 다른 탭에 대한 아이콘 설정
-
           return <MaterialIcons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: 'tomato', // 활성 탭의 색상
@@ -52,6 +53,13 @@ function TabNavigator({ route }) {
   );
 }
 
+function OcrResultsStackScreen() {
+  return (
+    <OcrResultsStack.Navigator>
+      <OcrResultsStack.Screen name="OcrResultsEditor" component={OcrResultsEditor} />
+    </OcrResultsStack.Navigator>
+  );
+}
 
 
 
@@ -67,9 +75,9 @@ function App() {
           initialParams={{ studentId: 1234 }}  // 예시 studentId
         />
         <Stack.Screen name="Ocr" component={Ocr} />
+        <Stack.Screen name="OcrResultsStack" component={OcrResultsStackScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-
 export default App;

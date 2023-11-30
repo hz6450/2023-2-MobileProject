@@ -38,26 +38,42 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: '#ffffff', // 배경색 변경
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    color: '#333', // 제목 색상 변경
+    marginBottom: 30,
   },
   infoContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 10,
+    padding: 20,
+    backgroundColor: '#fff', // 카드 배경색
+    borderRadius: 10,
+    shadowColor: "#000", // 그림자 색상
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginBottom: 20,
   },
   label: {
     fontSize: 18,
     fontWeight: '600',
+    color: '#555', // 라벨 색상 변경
   },
   info: {
     fontSize: 18,
-    color: '#333',
+    fontWeight: 'bold',
+    color: '#333', // 정보 텍스트 색상 변경
   },
 });
+
 
 export default DetailCreditScreen;

@@ -1,18 +1,17 @@
 //전공페이지
-import {SafeAreaView,TouchableOpacity, Text, View, Image} from 'react-native';
+import {SafeAreaView,TouchableOpacity, Text, View, Image, Pressable} from 'react-native';
 import { useEffect, useState } from 'react';
-import icons from '../../styles/icons';
+import {icons, COLORS} from '../../styles';
 import Major from './Major';
 import Refinement from './Refinement';
 import {MajorList, RefinementList} from './List/List';
+import styles from './DetailPage.style';
 
 const DetailPage = () => {
-    const types = ['essential', 'choose']// 필수, 선택
-    const major_types = ['Major', 'Refinement'] //전공 교양
-    
+    const types = ['필수', '선택']// 필수, 선택
+    const major_types = ['전공', '교양'] //전공 교양
     const [majorCreditsByType, setMajorCreditsByType] = useState({});
     const [refinementCreditsByType, setRefinementCreditsByType] = useState({});
-    
     const [state, setState] = useState(types[0]);
     const [majorState, setMajorState] = useState(major_types[0]);
     
@@ -36,14 +35,9 @@ const DetailPage = () => {
         setRefinementCreditsByType(calculateCreditsByType(RefinementList));
     }, []);
     
-    const creditInfo = {
-        refinement_Choose: 20, // 교양
-        refinement_Essential: 15, // 교양
-        major_Choose: 15, // 전공선택
-        major_Essential: 30, // 전공필수
-        // 필요하다면 추가적인 학점 정보를 여기에 넣을 수 있습니다.
-    };
-    
+    useEffect(() => {
+
+    },[majorState, state]);
    
     const getMajorSubDescription = (sub) => {
         const descriptions = {
@@ -54,9 +48,30 @@ const DetailPage = () => {
         };
         return descriptions[sub] || '분류 없음';
     };
+    const renderButton = (type, currentState, setStateFunction) => {
+        return (
+            <TouchableOpacity 
+                onPress={() => setStateFunction(type)}
+                style={[{ backgroundColor: currentState === type ? COLORS.eggplant : COLORS.lilac }, styles.typeBtn]}
+            >
+                <Text 
+                    style={[{
+                        color: currentState === type ? 'white' : 'black', 
+                        fontWeight: currentState === type ? 'bold' : 'normal',    
+                    }, styles.typeText]}
+                >
+                    {type}
+                </Text>
+            </TouchableOpacity>
+        );
+    };
 
     return (
         <SafeAreaView>
+            {/*
+            상단 프로플 페이지를 보여주기 위함
+            전공, 복수전공, 학년을 보여줍니다.
+            */}
             <View style={{flexDirection:"row", justifyContent:"center", alignItems:'center' }}>
                 <Image source={icons.user} style={{width:"30%", height:"100%"}}/>
                 <View style={{flexDirection:"column", width:"70%", alignItems:'center', backgroundColor:"#cccccc"}}>
@@ -75,41 +90,29 @@ const DetailPage = () => {
                 </View>
             </View>
             
-
-
-
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderWidth: 1, borderRadius: 1}}>
-                <TouchableOpacity onPress={() => setMajorState(major_types[0])}>
-                    <Text>전공</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setMajorState(major_types[1])}>
-                    <Text>교양</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setState(types[0])}>
-                    <Text>필수</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setState(types[1])}>
-                    <Text>선택</Text>
-                </TouchableOpacity>
-            </View>
-            <View>
-                <Text>Major Credits by Type:</Text>
-                {Object.entries(majorCreditsByType).map(([type, credits]) => (
-                    <Text key={type}>{`${type}: ${credits}`}</Text>
-                ))}
-                <Text>Refinement Credits by Type:</Text>
-                {Object.entries(refinementCreditsByType).map(([type, credits]) => (
-                    <Text key={type}>{`${type}: ${credits}`}</Text>
-                ))}
+            {/*
+                프로필 아래 버튼들이며 각 버튼을 누르면 해당하는 전공/교양/필수/선택에 대한 정보를 보여줍니다.
+                클릭이 된곳은 배경이 COLORS.eggplant색으로 지정을 해놓으며, 가독성을 위해 흰색으로 Text색을 지정, bold사용 
+            */}
+            <View style={styles.typeContainer}>
+                <View style={{ flex: 1, flexDirection: 'row' }}>
+                    {renderButton(major_types[0], majorState, setMajorState)}
+                    {renderButton(major_types[1], majorState, setMajorState)}
+                </View>
+                <View style={{ flex: 1, flexDirection: 'row' }}>
+                    {renderButton(types[0], state, setState)}
+                    {renderButton(types[1], state, setState)}
+                </View>
             </View>
 
-            {majorState === major_types[0] ? <Major state = {state}/>: <Refinement state = {state} />}
 
-
-        
-        
-        
-        
+            <Major 
+            type = {majorState}
+            state = {state}
+            majorCreditsByType = {majorCreditsByType}
+            refinementCreditsByType = {refinementCreditsByType}
+            />
+            
         </SafeAreaView>
     );
 }

@@ -15,6 +15,10 @@ const Profile = ({ route, navigation }) => {
     navigation.navigate('Login');
   };
 
+  const navigateToHome = () => {
+    navigation.navigate('Home');
+  };
+
   const renderMajorClassification = (classification) => {
     switch (classification) {
       case 1:
@@ -73,6 +77,9 @@ const Profile = ({ route, navigation }) => {
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>로그아웃</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.homeButton} onPress={navigateToHome}>
+        <Text style={styles.homeButtonText}>홈으로</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -119,6 +126,18 @@ const styles = StyleSheet.create({
   },
   logoutButtonText: {
     color: '#fff', // 버튼 텍스트 색상 변경
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  homeButton: {
+    backgroundColor: '#4CAF50', // 버튼 배경색
+    padding: 15,
+    borderRadius: 8,
+    width: '90%',
+    marginTop: 10, // 로그아웃 버튼과의 간격
+  },
+  homeButtonText: {
+    color: '#fff', // 버튼 텍스트 색상
     textAlign: 'center',
     fontSize: 16,
   },

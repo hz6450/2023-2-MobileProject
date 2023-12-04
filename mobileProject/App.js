@@ -9,7 +9,7 @@ import LoginScreen from './screen/Auth/Login';
 import Ocr from './screen/admin/index';
 import OcrResultsEditor from './screen/admin/OcrResult/OcrResultsEditor';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
+import DetailPage from './screen/detail/DetailPage';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -75,6 +75,9 @@ function App() {
           initialParams={{ studentId: 1234 }}  // 예시 studentId
         />
         <Stack.Screen name="Ocr" component={Ocr} />
+        <Stack.Screen name="DetailPage" component={DetailPage} 
+          // options={{ headerShown: false }}
+          />
         <Stack.Screen name="OcrResultsStack" component={OcrResultsStackScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>

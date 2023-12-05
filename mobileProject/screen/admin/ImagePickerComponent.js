@@ -46,6 +46,8 @@ const ImagePickerComponent = ({ onImagePicked, setProcessing, semesters, desired
       const response = await axios.post(apiURL, requestData);
       const blocks = response.data.responses[0].fullTextAnnotation.pages[0].blocks;
 
+      console.log(response);
+      console.log('성공');
       let foundSemesterText = false;
       for (const block of blocks) {
         const blockText = block.paragraphs.map(paragraph =>

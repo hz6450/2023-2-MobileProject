@@ -3,14 +3,13 @@ import {SafeAreaView,TouchableOpacity, Text, View, Image, Pressable} from 'react
 import { useEffect, useState } from 'react';
 import {icons, COLORS} from '../../styles';
 import Major from './Major';
-import Refinement from './Refinement';
 import styles from './DetailPage.style';
 
 const DetailPage = () => {
     const types = ['전체', '필수', '선택']// 필수, 선택
-    const major_types = ['전공', '교양'] //전공 교양
-    const [state, setState] = useState(types[0]);
-    const [majorState, setMajorState] = useState(major_types[0]);
+    const [typeState, setTypeState] = useState(types[0]);
+    const majorTypes = ['전공', '교양'] //전공 교양
+    const [majorState, setMajorState] = useState(majorTypes[0]);
     
     const data = {
         major: '컴퓨터공학과',
@@ -29,22 +28,26 @@ const DetailPage = () => {
         return descriptions[sub] || '분류 없음';
     };
     const renderButton = (type, currentState, setStateFunction) => {
+        const isSelected = currentState === type;
+        const isState = type === typeState;
+        const backgroundColor = isSelected ? (isState ? COLORS.plum : COLORS.eggplant) : (isState ? COLORS.lilac : COLORS.lavender);
+        const textColor = isSelected ? 'white' : 'black';
+        const fontWeight = isSelected ? 'bold' : 'normal';
+    
         return (
             <TouchableOpacity 
                 onPress={() => setStateFunction(type)}
-                style={[{ backgroundColor: currentState === type ? (currentState === state ? COLORS.plum:COLORS.eggplant) : '' }, styles.typeBtn]}
+                style={[{ backgroundColor: backgroundColor }, styles.typeBtn]}
             >
                 <Text 
-                    style={[{
-                        color: currentState === type ? 'white' : 'black', 
-                        fontWeight: currentState === type ? 'bold' : 'normal',    
-                    }, styles.typeText]}
+                    style={[{ color: textColor, fontWeight: fontWeight }, styles.typeText]}
                 >
                     {type}
                 </Text>
             </TouchableOpacity>
         );
     };
+    
 
     return (
         <SafeAreaView>
@@ -76,20 +79,20 @@ const DetailPage = () => {
             */}
             <View style={{flexDirection: 'row', }}>
                 <View style={styles.typeContainer}>
-                    {renderButton(major_types[0], majorState, setMajorState)}
-                    {renderButton(major_types[1], majorState, setMajorState)}
+                    {renderButton(majorTypes[0], majorState, setMajorState)}
+                    {renderButton(majorTypes[1], majorState, setMajorState)}
                 </View>
                 <View style={styles.majortypeContainer}>
-                    {renderButton(types[0], state, setState)}
-                    {renderButton(types[1], state, setState)}
-                    {renderButton(types[2], state, setState)}
+                    {renderButton(types[0], typeState, setTypeState)}
+                    {renderButton(types[1], typeState, setTypeState)}
+                    {renderButton(types[2], typeState, setTypeState)}
                 </View>
             </View>
 
 
             <Major 
-            type = {majorState}
-            state = {state}
+            type = {typeState}
+            state = {majorState}
             />
             
         </SafeAreaView>

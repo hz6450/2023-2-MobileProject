@@ -67,7 +67,7 @@ function OcrResultsStackScreen() {
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="DetailPage">
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen 
           name="MainTab" 

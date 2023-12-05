@@ -28,6 +28,35 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.lavender,
         flex: 1,
     },
+
+    averCreditTitle:{
+        fontSize: 20,
+        textAlign:'center',
+        fontWeight: 'bold',
+        borderWidth: 1,
+        flex: 1,
+    },
+    averCredit:{
+        fontSize: 20,
+        textAlign:'center',
+        fontWeight: 'bold',
+        borderWidth: 1,
+        flex: 1,
+    },
+    averScoreTitle:{
+        fontSize: 20,
+        textAlign:'center',
+        fontWeight: 'bold',
+        borderWidth: 1,
+        flex: 1,
+    },
+    averScore:{
+        fontSize: 20,
+        textAlign:'center',
+        fontWeight: 'bold',
+        borderWidth: 1,
+        flex: 1,
+    },
 })
 
 export default styles;

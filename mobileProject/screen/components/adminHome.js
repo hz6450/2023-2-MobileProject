@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Dimensions } from 'react-native';
+import HelpModal from '../admin/helpModal';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -9,6 +10,8 @@ const AdminHomeScreen = ({ navigation }) => {
   const [selectedSchool, setSelectedSchool] = useState('선문대');
   const [selectedDepartment, setSelectedDepartment] = useState('컴퓨터공학');
   const [selectedYear, setSelectedYear] = useState('2023');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [majorModalVisible, setMajorModalVisible] = useState(false); // 새로운 모달 상태
 
   const semesters = ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '4-1', '4-2', '41'];
 
@@ -48,13 +51,25 @@ const AdminHomeScreen = ({ navigation }) => {
       }
     }
     // 기본값이나 다른 조건에 맞는 값을 반환
-    return []; 
+    return [];
   };
+
+  // 현재 선택된 드롭다운 값을 기반으로 desiredTexts를 가져오는 함수
+  const desiredTexts = getDesiredTexts();
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>관리자 페이지</Text>
       <Text style={styles.smalltitle}>교육과정 표를 업로드하고 관리할 수 있습니다.</Text>
+
+      <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.helpButton}>
+        <Text style={styles.helpButtonText}>?</Text>
+      </TouchableOpacity>
+
+      {/* HelpModal 컴포넌트를 여기에 추가하고, modalVisible 상태를 전달합니다. */}
+      <HelpModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
+
+
       <Picker
         selectedValue={selectedSchool}
         onValueChange={(itemValue) => setSelectedSchool(itemValue)}>
@@ -75,6 +90,42 @@ const AdminHomeScreen = ({ navigation }) => {
         <Picker.Item label="2022" value="2022" />
         <Picker.Item label="2023" value="2023" />
       </Picker>
+
+      {/* "전공 확인" 버튼 */}
+      <TouchableOpacity
+        onPress={() => setMajorModalVisible(true)}
+        style={styles.majorButton}
+      >
+        <Text style={styles.majorButtonText}>전공 확인</Text>
+      </TouchableOpacity>
+
+      {/* "전공 확인" 모달 */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={majorModalVisible}
+        onRequestClose={() => {
+          setMajorModalVisible(!majorModalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            {desiredTexts.map((text, index) => (
+              <Text key={index} style={styles.modalText}>
+                {text}
+              </Text>
+            ))}
+            <TouchableOpacity
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setMajorModalVisible(!majorModalVisible)}
+            >
+              <Text style={styles.textStyle}>닫기</Text>
+            </TouchableOpacity>
+            <Text style={styles.modalSubText}>전공이 맞지 않을 경우 관리자에게 문의바람</Text>
+          </View>
+        </View>
+      </Modal>
+
 
       <TouchableOpacity style={styles.button} onPress={navigateToOCR}>
         <Text style={styles.buttonText}>업로드(OCR)</Text>
@@ -164,7 +215,88 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  // 기타 필요한 스타일 정의
+  helpButton: {
+    // 물음표 버튼 스타일
+    position: 'absolute',
+    right: 10,
+    top: 10,
+    backgroundColor: '#ffffff',
+    borderRadius: 18,
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  helpButtonText: {
+    // 물음표 버튼 텍스트 스타일
+    fontSize: 18,
+  },
+  centeredView: {
+    // 모달 중앙 정렬을 위한 스타일
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    // 모달 뷰 스타일
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  textStyle: {
+    // 모달 닫기 버튼 텍스트 스타일
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    // 모달 텍스트 스타일
+    marginBottom: 15,
+    textAlign: "center"
+  },
+  modalSubText: {
+    textAlign: "center",
+  },
+  desiredTextsContainer: {
+    // 선택된 전공 텍스트를 표시하기 위한 컨테이너 스타일
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  desiredText: {
+    // 전공 텍스트 스타일
+    fontSize: 16,
+    color: '#333',
+    marginVertical: 5,
+  },
+  majorButton: {
+    // "전공 확인" 버튼 스타일
+    backgroundColor: '#6a51ae', // 버튼 배경색 변경
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+    marginHorizontal: 80,
+    width: 200, // 버튼 너비 조정
+    height: 50, // 버튼 높이 조정
+  },
+  majorButtonText: {
+    // "전공 확인" 버튼 텍스트 스타일
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 

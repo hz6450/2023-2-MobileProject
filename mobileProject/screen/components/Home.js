@@ -1,4 +1,5 @@
-  import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { fetchUserData } from './data';
   import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
   import { LineChart } from 'react-native-chart-kit';
   import { Dimensions } from 'react-native';
@@ -6,6 +7,20 @@
   const screenWidth = Dimensions.get('window').width;
 
   const HomeScreen = ({ route, navigation }) => {
+    const [userData, setUserData] = useState(null);
+    const email = route.params?.studentId;
+
+    useEffect(() => {
+      const loadData = async () => {
+        const data = await fetchUserData(email);
+        if (data) {
+          setUserData(data);
+        }
+      };
+  
+      loadData();
+    }, [email]);
+
     const studentId = route.params?.studentId;
     const data = {
       labels: ["1학년", "2학년", "3학년", "4학년"],
@@ -38,7 +53,7 @@
     }
 
     const navigateToDetailCredit = () => {
-      navigation.navigate('DetailPage');
+      navigation.navigate('DetailPage' ,  { studentId: studentId });
     }
 
     const creditsCurrent = 120;

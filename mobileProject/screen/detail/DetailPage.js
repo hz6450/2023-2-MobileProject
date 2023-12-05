@@ -4,14 +4,11 @@ import { useEffect, useState } from 'react';
 import {icons, COLORS} from '../../styles';
 import Major from './Major';
 import Refinement from './Refinement';
-import {MajorList, RefinementList} from './List/List';
 import styles from './DetailPage.style';
 
 const DetailPage = () => {
-    const types = ['필수', '선택']// 필수, 선택
+    const types = ['전체', '필수', '선택']// 필수, 선택
     const major_types = ['전공', '교양'] //전공 교양
-    const [majorCreditsByType, setMajorCreditsByType] = useState({});
-    const [refinementCreditsByType, setRefinementCreditsByType] = useState({});
     const [state, setState] = useState(types[0]);
     const [majorState, setMajorState] = useState(major_types[0]);
     
@@ -22,23 +19,6 @@ const DetailPage = () => {
         
     }
     
-    const calculateCreditsByType = (courseList) => {
-        return courseList.reduce((acc, course) => {
-          const { types, credit } = course;
-          acc[types] = (acc[types] || 0) + credit;
-          return acc;
-        }, {});
-    };
-    
-    useEffect(() => {
-        setMajorCreditsByType(calculateCreditsByType(MajorList));
-        setRefinementCreditsByType(calculateCreditsByType(RefinementList));
-    }, []);
-    
-    useEffect(() => {
-
-    },[majorState, state]);
-   
     const getMajorSubDescription = (sub) => {
         const descriptions = {
             1: '전공심화',
@@ -52,7 +32,7 @@ const DetailPage = () => {
         return (
             <TouchableOpacity 
                 onPress={() => setStateFunction(type)}
-                style={[{ backgroundColor: currentState === type ? COLORS.eggplant : COLORS.lilac }, styles.typeBtn]}
+                style={[{ backgroundColor: currentState === type ? (currentState === state ? COLORS.plum:COLORS.eggplant) : '' }, styles.typeBtn]}
             >
                 <Text 
                     style={[{
@@ -94,14 +74,15 @@ const DetailPage = () => {
                 프로필 아래 버튼들이며 각 버튼을 누르면 해당하는 전공/교양/필수/선택에 대한 정보를 보여줍니다.
                 클릭이 된곳은 배경이 COLORS.eggplant색으로 지정을 해놓으며, 가독성을 위해 흰색으로 Text색을 지정, bold사용 
             */}
-            <View style={styles.typeContainer}>
-                <View style={{ flex: 1, flexDirection: 'row' }}>
+            <View style={{flexDirection: 'row', }}>
+                <View style={styles.typeContainer}>
                     {renderButton(major_types[0], majorState, setMajorState)}
                     {renderButton(major_types[1], majorState, setMajorState)}
                 </View>
-                <View style={{ flex: 1, flexDirection: 'row' }}>
+                <View style={styles.majortypeContainer}>
                     {renderButton(types[0], state, setState)}
                     {renderButton(types[1], state, setState)}
+                    {renderButton(types[2], state, setState)}
                 </View>
             </View>
 
@@ -109,8 +90,6 @@ const DetailPage = () => {
             <Major 
             type = {majorState}
             state = {state}
-            majorCreditsByType = {majorCreditsByType}
-            refinementCreditsByType = {refinementCreditsByType}
             />
             
         </SafeAreaView>

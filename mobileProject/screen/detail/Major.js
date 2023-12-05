@@ -6,26 +6,49 @@
 
 import {SafeAreaView, Text, View} from 'react-native';
 import { useState, useEffect } from 'react';
-const Major = ({type, state, majorCreditsByType, refinementCreditsByType}) => {
-    //type: 전공 교양
-    //state: 필수 선택
-    //creditsByType: 각 학점
+import {MajorList, RefinementList} from './List/List';
 
-    const major_types = ['Major', 'Refinement'] //전공 교양
+const Major = ({type, state }) => {
+    //type: 전공 교양
+    //state: 전체 필수 선택
+    //creditsByType: 각 학점
+    const types = ['전체', '필수', '선택']// 필수, 선택
+    const states = ['전공', '교양'] //전공 교양
+    const [majorCreditsByType, setMajorCreditsByType] = useState({});
+    const [refinementCreditsByType, setRefinementCreditsByType] = useState({});
+    //선택
+    const ch_types = ['선택', '균형교양']
+    //필수
+    const es_types = [ '필수', '사고와표현', '상담지도', '외국어', '인성교양', '자기개발', '정보화', '학문기초', '핵심교양', '현통']
+
     const printcreditsByType = (types) => (
         Object.entries(types).map(([key, index]) => (
             <Text key={key}>{`${key}: ${index}`}</Text>
         ))
     )
+    const printcreditsByStateType = (types, state) =>{
 
+    }
+    const calculateCreditsByType = (courseList) => {
+        return courseList.reduce((acc, course) => {
+          const { types, credit } = course;
+          acc[types] = (acc[types] || 0) + credit;
+          return acc;
+        }, {});
+    };
+    
+    useEffect(() => {
+        setMajorCreditsByType(calculateCreditsByType(MajorList));
+        setRefinementCreditsByType(calculateCreditsByType(RefinementList));
+    }, []);
+    
     return (
         <SafeAreaView>
             <Text>{type} \ {state} </Text>
-            {type === major_types[0] ?
+            {type === states[0] ?
                 // 전공에 대한 로직   
                 printcreditsByType(majorCreditsByType):printcreditsByType(refinementCreditsByType)
             }
-            {(type === major_types[0]) ?<Text>asd</Text>:<Text>asdasd</Text>}
             
         </SafeAreaView>
     );

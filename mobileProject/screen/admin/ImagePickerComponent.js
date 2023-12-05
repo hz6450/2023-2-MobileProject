@@ -79,7 +79,7 @@ const ImagePickerComponent = ({ onImagePicked, setProcessing, semesters, desired
         }
       }
 
-      if (!foundSemesterText) {
+      if (!foundSemesterText || !foundDesiredText) {
         Alert.alert("올바른 사진을 업로드해주세요.");
         onImagePicked(null);
       }

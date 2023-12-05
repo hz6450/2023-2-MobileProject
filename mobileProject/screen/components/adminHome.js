@@ -13,10 +13,12 @@ const AdminHomeScreen = ({ navigation }) => {
   const semesters = ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '4-1', '4-2', '41'];
 
   const navigateToOCR = () => {
+    const desiredTexts = getDesiredTexts();
     navigation.navigate('Ocr', {
       selectedSchool,
       selectedDepartment,
       selectedYear,
+      desiredTexts,
     });
   };
 
@@ -32,20 +34,37 @@ const AdminHomeScreen = ({ navigation }) => {
     });
   }
 
+  // 드롭다운 메뉴에서 선택값에 따라 desiredTexts를 결정하는 함수
+  const getDesiredTexts = () => {
+    if (selectedSchool === '선문대' && selectedDepartment === '컴퓨터공학') {
+      if (selectedYear === '2023') {
+        return ["공통 전공", "컴퓨터 공학 전공", "빅 데이터 전공", "게임 소프트웨어 전공"];
+      } else if (selectedYear >= '2019' && selectedYear <= '2022') {
+        return ["공통 전공", "컴퓨터 공학 전공", "데이터 공학 전공"];
+      }
+    } else if (selectedSchool === '선문대' && selectedDepartment === '경영학') {
+      if (selectedYear >= '2019' && selectedYear <= '2023') {
+        return ["회계", "경영 정보", "마케팅", "인사 조직", "재무", "경영 과학"];
+      }
+    }
+    // 기본값이나 다른 조건에 맞는 값을 반환
+    return []; 
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>관리자 페이지입니다</Text>
+      <Text style={styles.title}>관리자 페이지</Text>
+      <Text style={styles.smalltitle}>교육과정 표를 업로드하고 관리할 수 있습니다.</Text>
       <Picker
         selectedValue={selectedSchool}
         onValueChange={(itemValue) => setSelectedSchool(itemValue)}>
         <Picker.Item label="선문대" value="선문대" />
-        <Picker.Item label="호서대" value="호서대" />
       </Picker>
       <Picker
         selectedValue={selectedDepartment}
         onValueChange={(itemValue) => setSelectedDepartment(itemValue)}>
         <Picker.Item label="컴퓨터공학" value="컴퓨터공학" />
-        <Picker.Item label="사회복지학" value="사회복지학" />
+        <Picker.Item label="경영학" value="경영학" />
       </Picker>
       <Picker
         selectedValue={selectedYear}
@@ -58,7 +77,7 @@ const AdminHomeScreen = ({ navigation }) => {
       </Picker>
 
       <TouchableOpacity style={styles.button} onPress={navigateToOCR}>
-        <Text style={styles.buttonText}>OCR</Text>
+        <Text style={styles.buttonText}>업로드(OCR)</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={navigateManage}>
         <Text style={styles.buttonText}>상세 설정</Text>
@@ -123,6 +142,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333', // 제목 텍스트 색상 변경
   },
+  smalltitle: {
+    fontSize: 18,
+    marginBottom: 20,
+    fontWeight: 'bold',
+    color: '#333', // 제목 텍스트 색상 변경
+  },
   button: {
     backgroundColor: '#4caf50', // 버튼 배경색 변경
     padding: 10,
@@ -130,6 +155,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center', // 추가: 버튼 내부 텍스트를 중앙 정렬
     marginVertical: 10,
+    marginHorizontal: 80,
     width: 200, // 버튼 너비
     height: 50, // 버튼 높이
   },

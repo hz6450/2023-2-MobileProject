@@ -37,12 +37,8 @@
       navigation.navigate('Profile' ,  { studentId: studentId });
     }
 
-    const navigateToOCR= () => {
-      navigation.navigate('Ocr');
-    }
-
     const navigateToDetailCredit = () => {
-      navigation.navigate('DetailCredit');
+      navigation.navigate('DetailPage');
     }
 
     const creditsCurrent = 120;
@@ -81,9 +77,6 @@
 
         <TouchableOpacity style={styles.button} onPress={navigateToProfile}>
         <Text style={styles.buttonText}>프로필 페이지</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={navigateToOCR}>
-        <Text style={styles.buttonText}>OCR</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={navigateToDetailCredit}>
         <Text style={styles.buttonText}>세부이수학점 페이지</Text>

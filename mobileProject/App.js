@@ -10,6 +10,7 @@ import Ocr from './screen/admin/index';
 import OcrResultsEditor from './screen/admin/OcrResult/OcrResultsEditor';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DetailPage from './screen/detail/DetailPage';
+import AdminHomeScreen from './screen/components/adminHome'
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -28,7 +29,7 @@ function TabNavigator({ route }) {
             iconName = 'home';
           } else if (route.name === 'Profile') {
             iconName = 'person';
-          } else if (route.name === 'DetailCredit') {
+          } else if (route.name === 'DetailPage') {
             iconName = 'search';
           }
           // ... 다른 탭에 대한 아이콘 설정
@@ -48,7 +49,7 @@ function TabNavigator({ route }) {
         component={Profile} 
         initialParams={{ studentId: studentId }}
       />
-      <Tab.Screen name="DetailCredit" component={DetailCredit} options={{ title: '세부이수학점 페이지' }} />
+      <Tab.Screen name="DetailPage" component={DetailPage} options={{ title: '세부이수학점 페이지' }} />
     </Tab.Navigator>
   );
 }
@@ -66,7 +67,7 @@ function OcrResultsStackScreen() {
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="DetailPage">
+      <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen 
           name="MainTab" 
@@ -75,9 +76,11 @@ function App() {
           initialParams={{ studentId: 1234 }}  // 예시 studentId
         />
         <Stack.Screen name="Ocr" component={Ocr} />
-        <Stack.Screen name="DetailPage" component={DetailPage} 
-          // options={{ headerShown: false }}
-          />
+        
+        {/* Updated component name with first letter capitalized */}
+        <Stack.Screen name="AdminHome" component={AdminHomeScreen} />
+
+        <Stack.Screen name="DetailPage" component={DetailPage} />
         <Stack.Screen name="OcrResultsStack" component={OcrResultsStackScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>

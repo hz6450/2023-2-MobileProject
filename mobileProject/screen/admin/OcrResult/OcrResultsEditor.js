@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-    View, 
-    Text, 
-    TextInput, 
-    TouchableOpacity, 
-    ScrollView, 
-    StyleSheet, 
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    ScrollView,
+    StyleSheet,
     Alert
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
@@ -19,7 +19,7 @@ const OcrResultsEditor = ({ navigation }) => {
     const [ocrData, setOcrData] = useState({});
     const [editedText, setEditedText] = useState({});
     const [editMode, setEditMode] = useState({});
-    
+
     // 안쓰임
     useEffect(() => {
         fetchOcrData(selectedSemester);
@@ -65,9 +65,18 @@ const OcrResultsEditor = ({ navigation }) => {
         const ocrDocRef = doc(db, selectedSchool, selectedDepartment, selectedYear, semester);
         const docSnap = await getDoc(ocrDocRef);
 
-        if (docSnap.exists()) {
+        if (docSnap.exists() && docSnap.data() && Object.keys(docSnap.data()).length > 0) {
+            // 문서가 존재하고 데이터가 비어있지 않은 경우
             setOcrData(docSnap.data());
             setEditedText(mapOcrDataToEditableText(docSnap.data()));
+        } else {
+            // 문서가 존재하지 않거나 데이터가 비어있는 경우
+            Alert.alert(
+                "데이터 없음",
+                "선택한 학기에 대한 데이터가 없습니다.",
+                [{ text: "OK", onPress: () => navigation.goBack() }],
+                { cancelable: false }
+            );
         }
     };
 
@@ -253,7 +262,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 18,
         fontWeight: 'bold',
-        paddingBottom: 20, 
+        paddingBottom: 20,
     },
     buttonRow: {
         flexDirection: 'row',

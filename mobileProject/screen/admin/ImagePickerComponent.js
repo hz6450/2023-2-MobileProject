@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Alert, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import { db, doc, setDoc } from '../../firebaseConfig';
 
-const ImagePickerComponent = ({ onImagePicked, setProcessing, semesters, desiredTexts, selectedSchool, setSelectedSchool, selectedDepartment, setSelectedDepartment, selectedYear, setSelectedYear }) => {
+const ImagePickerComponent = ({ onImagePicked, setProcessing, semesters, desiredTexts, selectedSchool, selectedDepartment, selectedYear }) => {
 
   const pickImage = async () => {
     try {
@@ -94,35 +93,6 @@ const ImagePickerComponent = ({ onImagePicked, setProcessing, semesters, desired
 
   return (
     <View>
-      {/* 학교 선택 드롭다운 */}
-      <Picker
-  selectedValue={selectedSchool}
-  onValueChange={(itemValue, itemIndex) => setSelectedSchool(itemValue)}
->
-        <Picker.Item label="선문대" value="선문대" />
-        <Picker.Item label="호서대" value="호서대" />
-      </Picker>
-
-      {/* 학과 선택 드롭다운 */}
-      <Picker
-        selectedValue={selectedDepartment}
-        onValueChange={(itemValue, itemIndex) => setSelectedDepartment(itemValue)}>
-        <Picker.Item label="컴퓨터공학" value="컴퓨터공학" />
-        <Picker.Item label="사회복지학" value="사회복지학" />
-      </Picker>
-
-      {/* 년도 선택 드롭다운 */}
-      <Picker
-        selectedValue={selectedYear}
-        onValueChange={(itemValue, itemIndex) => setSelectedYear(itemValue)}>
-        <Picker.Item label="2019" value="2019" />
-        <Picker.Item label="2020" value="2020" />
-        <Picker.Item label="2021" value="2021" />
-        <Picker.Item label="2022" value="2022" />
-        <Picker.Item label="2023" value="2023" />
-      </Picker>
-
-      {/* 이미지 선택 버튼 */}
       <TouchableOpacity onPress={pickImage} style={styles.button}>
         <Text style={styles.text}>이미지를 선택하세요</Text>
       </TouchableOpacity>

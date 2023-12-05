@@ -1,15 +1,39 @@
-//전공페이지
-import {SafeAreaView,TouchableOpacity, Text, View, Image, Pressable} from 'react-native';
-import { useEffect, useState } from 'react';
-import {icons, COLORS} from '../../styles';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, TouchableOpacity, Text, View, Image } from 'react-native';
+import { fetchUserData } from '../components/data'; // data.js에서 fetchUserData 함수를 가져옵니다.
+import { icons, COLORS } from '../../styles';
 import Major from './Major';
 import styles from './DetailPage.style';
 
-const DetailPage = () => {
+const DetailPage = ({ route }) => {
+
+    const studentId = route.params?.studentId;
+    const [userData, setUserData] = useState(null);
+
     const types = ['전체', '필수', '선택']// 필수, 선택
     const [typeState, setTypeState] = useState(types[0]);
     const majorTypes = ['전공', '교양'] //전공 교양
     const [majorState, setMajorState] = useState(majorTypes[0]);
+
+    useEffect(() => {
+        console.log('Route parameters:', route.params); // 현재 route.params 로그 출력
+      
+        const fetchData = async () => {
+          if (studentId) {
+            const data = await fetchUserData(studentId);
+            if (data) {
+              setUserData(data);
+            } else {
+              console.log('No data received for studentId:', studentId);
+            }
+          } else {
+            console.log('studentId is undefined');
+          }
+        };
+      
+        fetchData();
+      }, [studentId]);
+      
     
     const data = {
         major: '컴퓨터공학과',
@@ -55,23 +79,18 @@ const DetailPage = () => {
             상단 프로플 페이지를 보여주기 위함
             전공, 복수전공, 학년을 보여줍니다.
             */}
-            <View style={{flexDirection:"row", justifyContent:"center", alignItems:'center' }}>
-                <Image source={icons.user} style={{width:"30%", height:"100%"}}/>
-                <View style={{flexDirection:"column", width:"70%", alignItems:'center', backgroundColor:"#cccccc"}}>
-                    {Object.entries(data).map(([key, value]) => (
-                        <View key={key}
-                            style={{
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                padding: 10,
-                            }}
-                        >
-                            <Text>{key+": "}</Text>
-                            <Text>{key === 'major_sub' ? `${getMajorSubDescription(value)}` : value}</Text>
-                        </View>
-                    ))}
-                </View>
+                    <View style={{flexDirection:"row", justifyContent:"center", alignItems:'center' }}>
+            <Image source={icons.user} style={{width:"30%", height:"100%"}}/>
+            <View style={{flexDirection:"column", width:"70%", alignItems:'center', backgroundColor:"#cccccc"}}>
+                {userData && ( // userData가 null이 아닐 때만 내부 내용을 렌더링
+                    <>
+                        <Text>전공: {userData.major}</Text>
+                        <Text>전공 분류: {getMajorSubDescription(userData.major_sub)}</Text>
+                        <Text>학년: {userData.grade}</Text>
+                    </>
+                )}
             </View>
+        </View>
             
             {/*
                 프로필 아래 버튼들이며 각 버튼을 누르면 해당하는 전공/교양/필수/선택에 대한 정보를 보여줍니다.

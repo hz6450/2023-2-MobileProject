@@ -40,7 +40,7 @@ const AdminHomeScreen = ({ navigation }) => {
       if (selectedYear === '2023') {
         return ["공통 전공", "컴퓨터 공학 전공", "빅 데이터 전공", "게임 소프트웨어 전공"];
       } else if (selectedYear >= '2019' && selectedYear <= '2022') {
-        return ["공통 전공", "컴퓨터 공학 전공", "데이터공학 전공"];
+        return ["공통 전공", "컴퓨터 공학 전공", "데이터 공학 전공"];
       }
     } else if (selectedSchool === '선문대' && selectedDepartment === '경영학') {
       if (selectedYear >= '2019' && selectedYear <= '2023') {

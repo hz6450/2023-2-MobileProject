@@ -5,7 +5,7 @@
 
   const screenWidth = Dimensions.get('window').width;
 
-  const HomeScreen = ({ route, navigation }) => {
+  const AdminHomeScreen = ({ route, navigation }) => {
     const studentId = route.params?.studentId;
     const data = {
       labels: ["1학년", "2학년", "3학년", "4학년"],
@@ -33,13 +33,12 @@
     };
 
 
-    const navigateToProfile = () => {
-      navigation.navigate('Profile' ,  { studentId: studentId });
+
+    const navigateToOCR= () => {
+      navigation.navigate('Ocr');
     }
 
-    const navigateToDetailCredit = () => {
-      navigation.navigate('DetailPage');
-    }
+
 
     const creditsCurrent = 120;
     const creditsTotal = 130;
@@ -52,7 +51,7 @@
 
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>홈 화면에 오신 것을 환영합니다!</Text>
+        <Text style={styles.title}>관리자 페이지입니다</Text>
 
         <View style={styles.dashboard}>
           <View style={styles.chartContainer}>
@@ -75,11 +74,8 @@
         </View>
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={navigateToProfile}>
-        <Text style={styles.buttonText}>프로필 페이지</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={navigateToDetailCredit}>
-        <Text style={styles.buttonText}>세부이수학점 페이지</Text>
+      <TouchableOpacity style={styles.button} onPress={navigateToOCR}>
+        <Text style={styles.buttonText}>OCR</Text>
       </TouchableOpacity>
       </View>
     );
@@ -161,4 +157,4 @@
   });
 
     
-    export default HomeScreen;
+    export default AdminHomeScreen;

@@ -9,6 +9,11 @@ const Login = ({ navigation }) => {
   const handleLogin = async () => {
     console.log('로그인 시도 중...');  // 로그인 시도 로그 추가
     try {
+      if (email === 'admin' && password === '1111') {
+        Alert.alert('관리자 로그인 성공', '관리자 모드로 로그인합니다.');
+        navigation.navigate('AdminHome');
+        return;
+      }
       // Firestore에서 학번에 해당하는 문서를 조회합니다.
       const userDocRef = doc(db, 'users', email);
       const userDocSnap = await getDoc(userDocRef);

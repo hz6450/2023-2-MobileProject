@@ -6,7 +6,7 @@ const MajorList = [
     {"types":"선택","title":"사이버보안개론","credit":3,"grade":3,"semester":1,"score":"A+"},
     {"types":"선택","title":"컴퓨터네트워크","credit":3,"grade":3,"semester":1,"score":"A+"},
     {"types":"선택","title":"기초프로젝트Ⅱ(PBL AdventureDesign)","credit":3,"grade":2,"semester":2,"score":"A+"},
-    {"types":"선택","title":"데이타베이스","credit":3,"grade":2,"semester":2,"score":"A+"},
+    {"types":"선택","title":"데이타베이스","credit":3,"grade":2,"semester":2,"score":"B+"},
     {"types":"선택","title":"고급객체지향프로그래밍","credit":3,"grade":2,"semester":2,"score":"A+"},
     {"types":"선택","title":"임베디드프로그래밍","credit":3,"grade":2,"semester":2,"score":"A+"},
     {"types":"필수","title":"컴퓨터구조","credit":3,"grade":2,"semester":2,"score":"A+"},
@@ -50,8 +50,52 @@ const MajorList = [
     
     
     ]
+
+    const scoreToGradePoint = (score) => {
+        switch (score) {
+            case 'A+': return 4.5;
+            case 'A': return 4.0;
+            case 'B+': return 3.5;
+            case 'B': return 3.0;
+            case 'C+': return 2.5;
+            case 'C': return 2.0;
+            case 'D+': return 1.5;
+            case 'D': return 1.0;
+            case 'F': return 0.0;
+            case 'P': return 0.0; // P/F 과목은 평균 계산에서 제외
+            default: return 0.0;
+        }
+    };
     
+    // 평균 학점을 계산하는 함수
+    const calculateAverageGrade = (list) => {
+        let totalGradePoints = 0;
+        let totalCredits = 0;
     
-    export {MajorList, RefinementList}
+        list.forEach(item => {
+            const gradePoint = scoreToGradePoint(item.score);
+            if (gradePoint > 0) { // P/F 과목은 제외
+                totalGradePoints += gradePoint * item.credit;
+                totalCredits += item.credit;
+            }
+        });
+    
+        return totalCredits > 0 ? (totalGradePoints / totalCredits).toFixed(2) : 'N/A';
+    };
+
+    const calculateTotalCredits = (list) => {
+        return list.reduce((total, course) => total + course.credit, 0);
+    };
+
+    // 이수한 학점의 총합 계산
+    const totalMajorCredits = calculateTotalCredits(MajorList);
+    const totalRefinementCredits = calculateTotalCredits(RefinementList);
+    const totalCredits = totalMajorCredits + totalRefinementCredits;
+    
+    // 평균 학점 계산
+    const averageMajorGrade = calculateAverageGrade(MajorList);
+    const averageRefinementGrade = calculateAverageGrade(RefinementList);
+    
+    export { MajorList, RefinementList, averageMajorGrade, averageRefinementGrade, totalCredits };
     
     

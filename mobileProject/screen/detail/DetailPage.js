@@ -42,15 +42,20 @@ const DetailPage = ({ route }) => {
         
     }
     
-    const getMajorSubDescription = (sub) => {
-        const descriptions = {
-            1: '전공심화',
-            2: '복수전공',
-            3: '부전공',
-            4: 'e-special',
-        };
-        return descriptions[sub] || '분류 없음';
-    };
+    const renderMajorClassification = (classification) => {
+        switch (classification) {
+          case 1:
+            return '전공심화';
+          case 2:
+            return '복수전공';
+          case 3:
+            return '부전공';
+          case 4:
+            return 'e-special';
+          default:
+            return '분류 없음'; // 만약 해당하지 않는 값이 들어올 경우
+        }
+      };
     const renderButton = (type, currentState, setStateFunction) => {
         const isSelected = currentState === type;
         const isState = type === typeState;
@@ -75,27 +80,15 @@ const DetailPage = ({ route }) => {
 
     return (
         <SafeAreaView>
-            {/*
-            상단 프로플 페이지를 보여주기 위함
-            전공, 복수전공, 학년을 보여줍니다.
-            */}
-                    <View style={{flexDirection:"row", justifyContent:"center", alignItems:'center' }}>
-            <Image source={icons.user} style={{width:"30%", height:"100%"}}/>
-            <View style={{flexDirection:"column", width:"70%", alignItems:'center', backgroundColor:"#cccccc"}}>
-                {userData && ( // userData가 null이 아닐 때만 내부 내용을 렌더링
-                    <>
-                        <Text>전공: {userData.major}</Text>
-                        <Text>전공 분류: {getMajorSubDescription(userData.major_sub)}</Text>
-                        <Text>학년: {userData.grade}</Text>
-                    </>
-                )}
+        <View style={styles.userInfoContainer}>
+            <Image source={icons.user} style={{ width: "30%", height: "100%" }}/>
+            <View style={styles.userInfoTextContainer}>
+                <Text style={[styles.userInfoText, styles.majorInfo]}>전공: {data.major}</Text>
+                <Text style={styles.userInfoText}>전공 분류: {renderMajorClassification(data.major_sub)}</Text>
+                <Text style={styles.userInfoText}>학년: {data.grade}</Text>
             </View>
         </View>
             
-            {/*
-                프로필 아래 버튼들이며 각 버튼을 누르면 해당하는 전공/교양/필수/선택에 대한 정보를 보여줍니다.
-                클릭이 된곳은 배경이 COLORS.eggplant색으로 지정을 해놓으며, 가독성을 위해 흰색으로 Text색을 지정, bold사용 
-            */}
             <View style={{flexDirection: 'row', }}>
                 <View style={styles.typeContainer}>
                     {renderButton(majorTypes[0], majorState, setMajorState)}

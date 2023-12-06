@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, ActivityIndicator, TouchableOpacity} from 'react-native';
 import { fetchUserData } from './data'; // data.js에서 fetchUserData 함수를 가져옵니다.
-import { db, doc, getDoc } from '../../firebaseConfig'; // doc과 getDoc을 firebaseConfig에서 가져옵니다.
 
 const Profile = ({ route, navigation }) => {
   const [userInfo, setUserInfo] = useState(null);

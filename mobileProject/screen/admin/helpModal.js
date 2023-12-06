@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, ScrollView, Dimensions } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, FlatList, Dimensions } from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
 
 const HelpModal = ({ modalVisible, setModalVisible }) => {
-  const [activeIndex, setActiveIndex] = useState(0); // 현재 보고 있는 이미지의 인덱스
+  const [activeIndex, setActiveIndex] = useState(0);
+  const flatListRef = useRef(null);
 
   const slides = [
     { image: require('../../assets/help/1.png'), text: '학교, 학과, 학년을 확인 후\n교육과정 사진을 업로드해주세요.' },
@@ -15,11 +16,13 @@ const HelpModal = ({ modalVisible, setModalVisible }) => {
     { image: require('../../assets/help/6.png'), text: '화면을 나가더라도 상세 설정에 가서\n언제든 확인 및 수정할 수 있습니다.' },
   ];
 
-  const updateActiveIndex = (event) => {
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const currentIndex = Math.round(contentOffsetX / screenWidth);
-    setActiveIndex(currentIndex);
-  };
+  const onViewableItemsChanged = useRef(({ viewableItems }) => {
+    if (viewableItems.length > 0) {
+      setActiveIndex(viewableItems[0].index);
+    }
+  }).current;
+
+  const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
 
   return (
     <Modal
@@ -37,22 +40,22 @@ const HelpModal = ({ modalVisible, setModalVisible }) => {
             <Text style={styles.closeButtonText}>×</Text>
           </TouchableOpacity>
 
-          {/* 페이지 번호 표시 */}
-          <Text style={styles.pageNumber}>{`${activeIndex + 1}/${slides.length}`}</Text>
-
-          <ScrollView
+          <FlatList
+            ref={flatListRef}
+            data={slides}
+            renderItem={({ item }) => (
+              <View style={styles.slideContainer}>
+                <Image style={styles.image} source={item.image} />
+                <Text style={styles.slideText}>{item.text}</Text>
+              </View>
+            )}
             horizontal
             pagingEnabled
-            onMomentumScrollEnd={updateActiveIndex}
             showsHorizontalScrollIndicator={false}
-          >
-            {slides.map((slide, index) => (
-              <View key={index} style={styles.slideContainer}>
-                <Image style={styles.image} source={slide.image} />
-                <Text style={styles.slideText}>{slide.text}</Text>
-              </View>
-            ))}
-          </ScrollView>
+            onViewableItemsChanged={onViewableItemsChanged}
+            viewabilityConfig={viewabilityConfig}
+            keyExtractor={(_, index) => index.toString()}
+          />
 
           <View style={styles.pagination}>
             {slides.map((_, index) => (
@@ -72,7 +75,7 @@ const HelpModal = ({ modalVisible, setModalVisible }) => {
 
 const styles = StyleSheet.create({
   image: {
-    width: screenWidth,
+    width: screenWidth - 90,
     height: 300, // 이미지 높이 조정
     resizeMode: 'contain'
   },
@@ -139,8 +142,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   slideContainer: {
-    width: screenWidth,
-    height: 300, // 이미지와 텍스트를 모두 포함할 수 있도록 조정
+    width: screenWidth - 80.5,
+    height: 400, // 이미지와 텍스트를 모두 포함할 수 있도록 조정
     alignItems: 'center',
     justifyContent: 'center',
   },

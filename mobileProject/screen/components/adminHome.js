@@ -121,7 +121,7 @@ const AdminHomeScreen = ({ navigation }) => {
             >
               <Text style={styles.textStyle}>닫기</Text>
             </TouchableOpacity>
-            <Text style={styles.modalSubText}>전공이 맞지 않을 경우 관리자에게 문의바람</Text>
+            <Text style={styles.modalSubText}>전공이 맞지 않을 경우 관리자에게 문의바랍니다</Text>
           </View>
         </View>
       </Modal>

@@ -1,8 +1,10 @@
+// 관리자 페이지 첫 화면
+
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Dimensions } from 'react-native';
-import HelpModal from '../admin/helpModal';
+import HelpModal from './helpModal';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -11,12 +13,12 @@ const AdminHomeScreen = ({ navigation }) => {
   const [selectedDepartment, setSelectedDepartment] = useState('컴퓨터공학');
   const [selectedYear, setSelectedYear] = useState('2023');
   const [modalVisible, setModalVisible] = useState(false);
-  const [majorModalVisible, setMajorModalVisible] = useState(false); // 새로운 모달 상태
+  const [majorModalVisible, setMajorModalVisible] = useState(false);
 
   const semesters = ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '4-1', '4-2', '41'];
 
+  // 전공 구분과 전공 필수 리스트 및 드롭다운 값들을 OCR로 전달
   const navigateToOCR = () => {
-    // 전공 구분과 전공 필수 리스트
     const desiredTexts = getDesiredTexts();
     const specialSubjects = getSpecialSubjects();
     navigation.navigate('Ocr', {
@@ -25,9 +27,11 @@ const AdminHomeScreen = ({ navigation }) => {
       selectedYear,
       desiredTexts,
       specialSubjects,
+      semesters,
     });
   };
 
+  // 전공 구분과 전공 필수 리스트 및 드롭다운 값들을 OCRResult로 전달
   const navigateManage = () => {
     const desiredTexts = getDesiredTexts();
     const specialSubjects = getSpecialSubjects();
@@ -44,7 +48,7 @@ const AdminHomeScreen = ({ navigation }) => {
     });
   }
 
-  // 드롭다운 메뉴에서 선택값에 따라 desiredTexts 및 전공 필수를 결정하는 함수
+  // 드롭다운 메뉴에서 선택값에 따라 desiredTexts를 결정하는 함수
   const getDesiredTexts = () => {
     if (selectedSchool === '선문대' && selectedDepartment === '컴퓨터공학') {
       if (selectedYear === '2023') {
@@ -61,23 +65,18 @@ const AdminHomeScreen = ({ navigation }) => {
     return [];
   };
 
-  // 드롭다운 메뉴에서 선택값에 따라 desiredTexts 및 전공 필수를 결정하는 함수
+  // 드롭다운 메뉴에서 선택값에 따라 전공 필수를 결정하는 함수
   const getSpecialSubjects = () => {
     if (selectedSchool === '선문대' && selectedDepartment === '컴퓨터공학') {
       if (selectedYear === '2023') {
         return ["기초 프로젝트", "오픈 소스 SW 프로젝트", "모바일 SW 프로젝트", "종합 프로젝트"];
       } else if (selectedYear >= '2019' && selectedYear <= '2022') {
-        return ["데이터 구조", "알고리즘", "컴퓨터 구조", "오픈 소스 SW 프로젝트", "운영체제 (", "종합 프로젝트"];
+        return ["데이터 구조", "알고리즘", "컴퓨터 구조", "오픈 소스 SW 프로젝트", "운영체제", "종합 프로젝트"];
       }
     }
-    // else if (selectedSchool === '선문대' && selectedDepartment === '경영학') {
-    //   if (selectedYear >= '2019' && selectedYear <= '2023') {
-    //     return ["회계", "경영 정보", "마케팅", "인사 조직", "재무", "경영 과학"];
-    //   }
-    // }
-    // 기본값이나 다른 조건에 맞는 값을 반환
     return [];
   };
+  
   // 현재 선택된 드롭다운 값을 기반으로 desiredTexts를 가져오는 함수
   const desiredTexts = getDesiredTexts();
 
@@ -90,10 +89,10 @@ const AdminHomeScreen = ({ navigation }) => {
         <Text style={styles.helpButtonText}>?</Text>
       </TouchableOpacity>
 
-      {/* HelpModal 컴포넌트를 여기에 추가하고, modalVisible 상태를 전달합니다. */}
+      {/* 도움말 */}
       <HelpModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
 
-
+      {/* 드롭다운 */}
       <Picker
         selectedValue={selectedSchool}
         onValueChange={(itemValue) => setSelectedSchool(itemValue)}>
@@ -228,11 +227,11 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
-    justifyContent: 'center', // 추가: 버튼 내부 텍스트를 중앙 정렬
+    justifyContent: 'center',
     marginVertical: 10,
     marginHorizontal: 80,
-    width: 200, // 버튼 너비
-    height: 50, // 버튼 높이
+    width: 200,
+    height: 50,
   },
   buttonText: {
     color: '#fff', // 버튼 텍스트 색상 변경

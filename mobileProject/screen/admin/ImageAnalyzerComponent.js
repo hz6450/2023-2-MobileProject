@@ -1,10 +1,12 @@
+// 선택한 이미지를 화면에 표시하는 컴포넌트
+
 import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Image, StyleSheet, ScrollView } from 'react-native';
 
 const ImageAnalzerComponent = ({ imageUri }) => {
   return (
     <ScrollView style={{ flex: 1 }}>
-      <View style={styles.container}>
+      <View>
         {imageUri && (
           <View style={{ position: 'relative' }}>
             <Image
@@ -18,9 +20,8 @@ const ImageAnalzerComponent = ({ imageUri }) => {
   );
 };
 
+// 장식
 const styles = StyleSheet.create({
-  container: {
-  },
 });
 
 export default ImageAnalzerComponent;

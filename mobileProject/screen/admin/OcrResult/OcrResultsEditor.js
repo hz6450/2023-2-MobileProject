@@ -1,3 +1,6 @@
+// OCR 결과를 보여주는 화면
+// DisplayResultsComponents의 결과로 1회 출력되거나, adminHome에서 버튼을 통해 접근할 수 있음
+
 import React, { useState, useEffect } from 'react';
 import {
     View,
@@ -20,12 +23,13 @@ const OcrResultsEditor = ({ navigation }) => {
     const [editedText, setEditedText] = useState({});
     const [validSemesters, setValidSemesters] = useState([]);
 
+    // 버튼 및 텍스트 블록 생성
     useEffect(() => {
         fetchOcrData(selectedSemester);
         filterValidSemesters();
     }, [selectedSemester, semesters]);
 
-    // 해당하지 않는 문자열 출력 안 함
+    // semesters 값 중 firebase 그룹 값이 비어있는 곳의 경우 버튼을 생성하지 않음
     const filterValidSemesters = async () => {
         const validSems = [];
         for (const semester of semesters) {
@@ -38,6 +42,7 @@ const OcrResultsEditor = ({ navigation }) => {
         setValidSemesters(validSems);
     };
 
+    // 이 네 곳 값이 모두 비어있을 경우를 계산함
     const hasNonEmptyGroups = (data) => {
         const groups = data.groups || {};
         return ['group1', 'group2', 'group3', 'group4'].some(group => groups[group] && groups[group].length > 0);
@@ -45,7 +50,7 @@ const OcrResultsEditor = ({ navigation }) => {
 
     // 문자 삭제
     const deleteText = (group) => {
-        // 삭제 전에 사용자에게 확인을 요청합니다.
+        // 삭제 전에 사용자에게 확인을 요청
         Alert.alert(
             "삭제 확인",
             "정말로 이 텍스트를 삭제하시겠습니까?",
@@ -108,8 +113,9 @@ const OcrResultsEditor = ({ navigation }) => {
         return editTextMap;
     };
 
-    // 전체 완료했을 때
+    // 전체 완료했을 때 저장하는 함수. semesters 전체를 저장해야 하므로 firebase에 새로 접근합니다.
     const saveChanges = async () => {
+        // semester 전체에 한 번씩 접근합니다.
         await Promise.all(semesters.map(async (semester) => {
             const ocrDocRef = doc(db, selectedSchool, selectedDepartment, selectedYear, semester);
             const docSnap = await getDoc(ocrDocRef);
@@ -126,7 +132,7 @@ const OcrResultsEditor = ({ navigation }) => {
                         updateData['교양'] = groupData;
                     } else {
                         const desiredTextIndex = parseInt(groupKey.replace('group', '')) - 2;
-                        const groupName = desiredTexts[desiredTextIndex] || groupKey; // desiredTexts 배열의 범위를 벗어난 경우 원래의 groupKey를 사용
+                        const groupName = desiredTexts[desiredTextIndex] || groupKey; // desiredTexts 배열의 범위를 벗어난 경우 원래의 groupKey를 사용, group1, group2... 등
                         groupData.forEach(line => {
                             const isSpecialSubject = specialSubjects.some(subject => line.includes(subject));
                             if (isSpecialSubject) {
@@ -149,14 +155,13 @@ const OcrResultsEditor = ({ navigation }) => {
 
 
 
-    // 버튼 왔다갔다할 때 씀
+    // semesters 버튼끼리 값을 이동할 때, 이전 변경사항을 저장하는 함수
     const saveChangebutton = async () => {
-        // Firebase 문서에서 기존의 모든 groups를 삭제합니다.
+        // Firebase 문서에서 기존의 모든 groups를 삭제
         const ocrDocRef = doc(db, selectedSchool, selectedDepartment, selectedYear, selectedSemester);
         await setDoc(ocrDocRef, { groups: {} }, { merge: true });
-        //await deleteField
 
-        // 새로운 데이터로 groups 맵을 채웁니다.
+        // 새로운 데이터로 groups 맵을 채움
         const newGroups = Object.keys(editedText)
             .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
             .reduce((acc, group, index) => {
@@ -166,7 +171,7 @@ const OcrResultsEditor = ({ navigation }) => {
                 return acc;
             }, {});
 
-        // 새로운 groups로 덮어씁니다.
+        // 새로운 groups로 덮어씀
         await setDoc(ocrDocRef, { groups: newGroups }, { merge: true });
     };
 
@@ -177,6 +182,7 @@ const OcrResultsEditor = ({ navigation }) => {
             const groupIndex = groupKeys.indexOf(group);
             const lines = prev[group].split('\n');
 
+            // 위로 이동
             if (direction === 'up') {
                 if (index > 0) {
                     // 같은 그룹 내에서 라인 이동
@@ -188,7 +194,9 @@ const OcrResultsEditor = ({ navigation }) => {
                     prevLines.push(lines.shift());
                     return { ...prev, [prevGroup]: prevLines.join('\n'), [group]: lines.join('\n') };
                 }
-            } else if (direction === 'down') {
+            }
+            // 아래로 이동
+            else if (direction === 'down') {
                 if (index < lines.length - 1) {
                     // 같은 그룹 내에서 라인 이동
                     [lines[index], lines[index + 1]] = [lines[index + 1], lines[index]];
@@ -214,7 +222,7 @@ const OcrResultsEditor = ({ navigation }) => {
         });
     };
 
-    // 텍스트 라인을 간략화하기 위한 함수 (괄호 이후의 텍스트 제거)
+    // 텍스트 라인을 간략화하기 위한 함수
     const simplifyText = (group, index) => {
         setEditedText(prev => {
             const lines = prev[group].split('\n');
@@ -269,7 +277,6 @@ const OcrResultsEditor = ({ navigation }) => {
                                     style={styles.lineTextInput}
                                     value={line}
                                     onChangeText={(newLine) => editLine(group, index, newLine)}
-                                // editable={editMode[`${group}-${index}`]} // 편집 모드 제어 부분 제거
                                 />
                                 <View style={styles.lineButtonRow}>
                                     {/* "간략" 버튼 */}

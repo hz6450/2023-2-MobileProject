@@ -96,6 +96,7 @@ const MajorList = [
     const averageMajorGrade = calculateAverageGrade(MajorList);
     const averageRefinementGrade = calculateAverageGrade(RefinementList);
     
+    // 학년별 학점평균 계산
     const calculateAverageGradeByYear = (list) => {
         let yearGrades = { 1: [], 2: [], 3: [], 4: [] };
     

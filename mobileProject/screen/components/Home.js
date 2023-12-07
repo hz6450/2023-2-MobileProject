@@ -11,7 +11,8 @@ import { fetchUserData } from './data';
     const [userData, setUserData] = useState(null);
     const email = route.params?.studentId;
 
-    useEffect(() => {
+    useEffect(() => {       
+      // 파이어베이스에서 값 호출
       const loadData = async () => {
         const data = await fetchUserData(email);
         if (data) {
@@ -30,7 +31,7 @@ import { fetchUserData } from './data';
       console.log("학년별 평균 학점:", averageGradesByYear);
     }, []);
 
-    const studentId = route.params?.studentId;
+    const { studentId } = route.params;
     const data = {
         labels: ["1학년", "2학년", "3학년", "4학년"],
         datasets: [
@@ -65,24 +66,10 @@ import { fetchUserData } from './data';
   };
   
 
-
-    const navigateToProfile = () => {
-      navigation.navigate('Profile' ,  { studentId: studentId });
-    }
-
     const navigateToDetailCredit = () => {
-      console.log('1',userData)
-      navigation.navigate('DetailPage' ,  { userData: userData });
+      // 세부이수학점으로 이동
+      navigation.navigate('DetailPage' ,  { studentId: studentId });
     }
-
-    const creditsCurrent = 120;
-    const creditsTotal = 130;
-    const serviceHoursCurrent = 44;
-    const serviceHoursTotal = 40;
-
-    const getInfoTextStyle = (current, total) => {
-      return current < total ? styles.infoTextRed : styles.infoText;
-    };
 
     return (
       <View style={styles.container}>
@@ -90,6 +77,7 @@ import { fetchUserData } from './data';
 
         <View style={styles.dashboard}>
           <View style={styles.chartContainer}>
+            {/* 학점 그래프 적용 */}
             <LineChart
               data={data}
               width={screenWidth - 60}
@@ -98,22 +86,16 @@ import { fetchUserData } from './data';
             />
           </View>
           <View style={styles.infoContainer}>
-          {/* 조건부 스타일 적용 */}
+          
+          <TouchableOpacity onPress={navigateToDetailCredit}>
           <View style={styles.infoContainer}>
                 <Text style={styles.infoText}>이수 학점: {totalCredits}학점</Text>
                 <Text style={styles.infoText}>전공 평균 학점: {averageMajorGrade}</Text>
                 <Text style={styles.infoText}>교양 평균 학점: {averageRefinementGrade}</Text>
             </View>
-          {/* 기타 필요한 정보 추가 */}
+          </TouchableOpacity>
         </View>
         </View>
-
-        <TouchableOpacity style={styles.button} onPress={navigateToProfile}>
-        <Text style={styles.buttonText}>프로필 페이지</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={navigateToDetailCredit}>
-        <Text style={styles.buttonText}>세부이수학점 페이지</Text>
-      </TouchableOpacity>
       </View>
     );
   };

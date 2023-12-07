@@ -47,19 +47,23 @@ import { fetchUserData } from './data';
     };
 
     const chartConfig = {
-      backgroundGradientFrom: "#ffffff",
-      backgroundGradientTo: "#ffffff",
-      color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-      labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-      strokeWidth: 5,
+      backgroundGradientFrom: "#f0f0f0", // 배경 그라데이션 시작 색상
+      backgroundGradientTo: "#ffffff", // 배경 그라데이션 종료 색상
+      color: (opacity = 1) => `rgba(34, 202, 236, ${opacity})`, // 선 및 텍스트 색상
+      labelColor: (opacity = 1) => `rgba(23, 153, 169, ${opacity})`, // 라벨(학년) 텍스트 색상
+      strokeWidth: 3, // 선의 두께
       barPercentage: 0.5,
-      useShadowColorFromDataset: false,
+      useShadowColorFromDataset: false, // 데이터셋에서 그림자 색상 사용 여부
       propsForDots: {
-        r: "6",
-        strokeWidth: "2",
-        stroke: "#ffa726"
+          r: "6", // 점의 반지름
+          strokeWidth: "2", // 점의 외곽선 두께
+          stroke: "#ffa726" // 점의 외곽선 색상
       },
-    };
+      decimalPlaces: 2, // 소수점 자릿수
+      fillShadowGradient: '#4caf50', // 선 아래 그림자 그라데이션 색상
+      fillShadowGradientOpacity: 0.3, // 선 아래 그림자 그라데이션 투명도
+  };
+  
 
 
     const navigateToProfile = () => {

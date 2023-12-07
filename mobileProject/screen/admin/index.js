@@ -14,12 +14,14 @@ const Ocr = ({ route, navigation }) => {
   const selectedSchool = route.params?.selectedSchool;
   const selectedDepartment = route.params?.selectedDepartment;
   const selectedYear = route.params?.selectedYear;
-  
+  const desiredTexts = route.params?.desiredTexts || [];
+  const specialSubjects = route.params?.specialSubjects || [];
+
   // semesters의 경우 고정값 사용
   const semesters = ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '4-1', '4-2', '41'];
 
   // desiredTexts의 경우 과마다 값이 달라져야 함. 지금은 고정값
-  const desiredTexts = ["공통 전공", "컴퓨터 공학 전공", "빅 데이터 전공", "게임 소프트웨어 전공"];
+  // const desiredTexts = ["공통 전공", "컴퓨터 공학 전공", "빅 데이터 전공", "게임 소프트웨어 전공"];
 
   // 이미지 분석이 완료되었을 때 호출되는 함수
   const handleOcrComplete = () => {
@@ -30,7 +32,9 @@ const Ocr = ({ route, navigation }) => {
         selectedSchool: selectedSchool,
         selectedDepartment: selectedDepartment,
         selectedYear: selectedYear,
-        semesters: semesters
+        semesters: semesters,
+        desiredTexts: desiredTexts,
+        specialSubjects: specialSubjects,
       },
     });
   };

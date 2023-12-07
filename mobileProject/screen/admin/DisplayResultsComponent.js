@@ -182,7 +182,7 @@ const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts, setUploadC
   };
 
   function isSameLine(block1, block2) {
-    const yThreshold = 15; // y 좌표 차이가 이 값 이하이면 같은 라인으로 간주
+    const yThreshold = 18; // y 좌표 차이가 이 값 이하이면 같은 라인으로 간주
     return Math.abs(block1.minY - block2.minY) < yThreshold ||
       Math.abs(block1.maxY - block2.maxY) < yThreshold;
   }

@@ -1,11 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, ActivityIndicator, TouchableOpacity} from 'react-native';
-import { db, doc, getDoc } from '../../firebaseConfig';
+import { fetchUserData } from './data'; // data.js에서 fetchUserData 함수를 가져옵니다.
 
 const Profile = ({ route, navigation }) => {
   const [userInfo, setUserInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const  studentId  = route.params?.studentId || '기본값';
+  const studentId = route.params?.studentId || '기본값';
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      setIsLoading(true);
+      const userData = await fetchUserData(studentId);
+      if (userData) {
+        setUserInfo(userData);
+      } else {
+        console.log('No such document!');
+      }
+      setIsLoading(false);
+    };
+
+    fetchUser();
+  }, [studentId]);
 
   const handleLogout = () => {
     // 로그아웃 로직 구현
@@ -34,32 +49,6 @@ const Profile = ({ route, navigation }) => {
     }
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        // Firestore에서 학번에 해당하는 문서를 조회합니다.
-        const docRef = doc(db, 'users', studentId);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          // 문서에서 데이터를 가져와서 상태에 저장합니다.
-          setUserInfo(docSnap.data());
-        } else {
-          // 문서가 없을 때 처리 로직
-          console.log('No such document!');
-        }
-      } catch (error) {
-        console.error('Error getting document:', error);
-      }
-      setIsLoading(false);
-    };
-
-    fetchUserData();
-  }, [studentId]);
-
-  if (isLoading) {
-    return <ActivityIndicator size="large" />;
-  }
 
   return (
     <View style={styles.container}>

@@ -1,11 +1,27 @@
-  import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { fetchUserData } from './data';
   import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
   import { LineChart } from 'react-native-chart-kit';
   import { Dimensions } from 'react-native';
+  import { totalCredits, averageMajorGrade, averageRefinementGrade } from '../detail/List/List';
 
   const screenWidth = Dimensions.get('window').width;
 
   const HomeScreen = ({ route, navigation }) => {
+    const [userData, setUserData] = useState(null);
+    const email = route.params?.studentId;
+
+    useEffect(() => {
+      const loadData = async () => {
+        const data = await fetchUserData(email);
+        if (data) {
+          setUserData(data);
+        }
+      };
+  
+      loadData();
+    }, [email]);
+
     const studentId = route.params?.studentId;
     const data = {
       labels: ["1학년", "2학년", "3학년", "4학년"],
@@ -38,7 +54,7 @@
     }
 
     const navigateToDetailCredit = () => {
-      navigation.navigate('DetailPage');
+      navigation.navigate('DetailPage' ,  { studentId: studentId });
     }
 
     const creditsCurrent = 120;
@@ -65,12 +81,11 @@
           </View>
           <View style={styles.infoContainer}>
           {/* 조건부 스타일 적용 */}
-          <Text style={getInfoTextStyle(creditsCurrent, creditsTotal)}>
-            이수 학점: {creditsCurrent}학점 / {creditsTotal}학점
-          </Text>
-          <Text style={getInfoTextStyle(serviceHoursCurrent, serviceHoursTotal)}>
-            봉사 시간: {serviceHoursCurrent}시간 / {serviceHoursTotal}시간
-          </Text>
+          <View style={styles.infoContainer}>
+                <Text style={styles.infoText}>이수 학점: {totalCredits}학점</Text>
+                <Text style={styles.infoText}>전공 평균 학점: {averageMajorGrade}</Text>
+                <Text style={styles.infoText}>교양 평균 학점: {averageRefinementGrade}</Text>
+            </View>
           {/* 기타 필요한 정보 추가 */}
         </View>
         </View>

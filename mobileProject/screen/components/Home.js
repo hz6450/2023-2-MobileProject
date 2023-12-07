@@ -71,7 +71,8 @@ import { fetchUserData } from './data';
     }
 
     const navigateToDetailCredit = () => {
-      navigation.navigate('DetailPage' ,  { studentId: studentId });
+      console.log('1',userData)
+      navigation.navigate('DetailPage' ,  { userData: userData });
     }
 
     const creditsCurrent = 120;

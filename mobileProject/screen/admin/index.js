@@ -15,6 +15,7 @@ const Ocr = ({ route, navigation }) => {
   const selectedDepartment = route.params?.selectedDepartment;
   const selectedYear = route.params?.selectedYear;
   const desiredTexts = route.params?.desiredTexts || [];
+  const specialSubjects = route.params?.specialSubjects || [];
 
   // semesters의 경우 고정값 사용
   const semesters = ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '4-1', '4-2', '41'];
@@ -31,7 +32,9 @@ const Ocr = ({ route, navigation }) => {
         selectedSchool: selectedSchool,
         selectedDepartment: selectedDepartment,
         selectedYear: selectedYear,
-        semesters: semesters
+        semesters: semesters,
+        desiredTexts: desiredTexts,
+        specialSubjects: specialSubjects,
       },
     });
   };

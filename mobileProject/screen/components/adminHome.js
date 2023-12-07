@@ -16,28 +16,35 @@ const AdminHomeScreen = ({ navigation }) => {
   const semesters = ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '4-1', '4-2', '41'];
 
   const navigateToOCR = () => {
+    // 전공 구분과 전공 필수 리스트
     const desiredTexts = getDesiredTexts();
+    const specialSubjects = getSpecialSubjects();
     navigation.navigate('Ocr', {
       selectedSchool,
       selectedDepartment,
       selectedYear,
       desiredTexts,
+      specialSubjects,
     });
   };
 
   const navigateManage = () => {
+    const desiredTexts = getDesiredTexts();
+    const specialSubjects = getSpecialSubjects();
     navigation.navigate('OcrResultsStack', {
       screen: 'OcrResultsEditor',
       params: {
         selectedSchool: selectedSchool,
         selectedDepartment: selectedDepartment,
         selectedYear: selectedYear,
-        semesters: semesters
+        semesters: semesters,
+        desiredTexts: desiredTexts,
+        specialSubjects: specialSubjects,
       },
     });
   }
 
-  // 드롭다운 메뉴에서 선택값에 따라 desiredTexts를 결정하는 함수
+  // 드롭다운 메뉴에서 선택값에 따라 desiredTexts 및 전공 필수를 결정하는 함수
   const getDesiredTexts = () => {
     if (selectedSchool === '선문대' && selectedDepartment === '컴퓨터공학') {
       if (selectedYear === '2023') {
@@ -54,6 +61,23 @@ const AdminHomeScreen = ({ navigation }) => {
     return [];
   };
 
+  // 드롭다운 메뉴에서 선택값에 따라 desiredTexts 및 전공 필수를 결정하는 함수
+  const getSpecialSubjects = () => {
+    if (selectedSchool === '선문대' && selectedDepartment === '컴퓨터공학') {
+      if (selectedYear === '2023') {
+        return ["기초 프로젝트", "오픈 소스 SW 프로젝트", "모바일 SW 프로젝트", "종합 프로젝트"];
+      } else if (selectedYear >= '2019' && selectedYear <= '2022') {
+        return ["데이터 구조", "알고리즘", "컴퓨터 구조", "오픈 소스 SW 프로젝트", "운영체제 (", "종합 프로젝트"];
+      }
+    }
+    // else if (selectedSchool === '선문대' && selectedDepartment === '경영학') {
+    //   if (selectedYear >= '2019' && selectedYear <= '2023') {
+    //     return ["회계", "경영 정보", "마케팅", "인사 조직", "재무", "경영 과학"];
+    //   }
+    // }
+    // 기본값이나 다른 조건에 맞는 값을 반환
+    return [];
+  };
   // 현재 선택된 드롭다운 값을 기반으로 desiredTexts를 가져오는 함수
   const desiredTexts = getDesiredTexts();
 

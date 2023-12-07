@@ -23,18 +23,17 @@ const Profile = ({ route, navigation }) => {
   }, [studentId]);
 
   const handleLogout = () => {
-    // 로그아웃 로직 구현
-    // 예: 사용자 세션 종료, 인증 토큰 제거 등  
-
-    // 로그인 화면으로 이동
+    // 로그아웃 기능
     navigation.navigate('Login');
   };
 
   const navigateToHome = () => {
+    // 홈으로 돌아가는 기능
     navigation.navigate('Home');
   };
 
   const renderMajorClassification = (classification) => {
+    // 전공분류 
     switch (classification) {
       case 1:
         return '전공심화';

@@ -28,29 +28,29 @@ const NeedPage = () => {
             );
         }
     };
-  useEffect(() => {
-    const fetchFirebaseData = async () => {
-      // Firebase에서 데이터 가져오기
-      const firebaseData = await firebase.database().ref('/yourPath').once('value');
-      
-      // 비교 로직
-      const missingCourses = firebaseData.filter(course => 
-        !MajorList.some(majorCourse => majorCourse.title === course.title)
-      );
+    useEffect(() => {
+        const fetchFirebaseData = async () => {
+        // Firebase에서 데이터 가져오기
+        const firebaseData = await firebase.database().ref('/yourPath').once('value');
+        
+        // 비교 로직
+        const missingCourses = firebaseData.filter(course => 
+            !MajorList.some(majorCourse => majorCourse.title === course.title)
+        );
 
-      setNeededCourses(missingCourses);
-    };
+        setNeededCourses(missingCourses);
+        };
 
-    fetchFirebaseData();
-  }, []);
+        fetchFirebaseData();
+    }, []);
 
-  return (
-    <View>
-      {neededCourses.map(course => (
-        <Text key={course.id}>{course.title}</Text>
-      ))}
-    </View>
-  );
+    return (
+        <View>
+        {neededCourses.map(course => (
+            <Text key={course.id}>{course.title}</Text>
+        ))}
+        </View>
+    );
 };
 
 export default NeedPage;

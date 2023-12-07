@@ -48,23 +48,9 @@ import { fetchUserData } from './data';
       },
     };
 
-
-    const navigateToProfile = () => {
-      navigation.navigate('Profile' ,  { studentId: studentId });
-    }
-
     const navigateToDetailCredit = () => {
       navigation.navigate('DetailPage' ,  { studentId: studentId });
     }
-
-    const creditsCurrent = 120;
-    const creditsTotal = 130;
-    const serviceHoursCurrent = 44;
-    const serviceHoursTotal = 40;
-
-    const getInfoTextStyle = (current, total) => {
-      return current < total ? styles.infoTextRed : styles.infoText;
-    };
 
     return (
       <View style={styles.container}>
@@ -79,8 +65,11 @@ import { fetchUserData } from './data';
               chartConfig={chartConfig}
             />
           </View>
+      <TouchableOpacity onPress={navigateToDetailCredit}>
+
           <View style={styles.infoContainer}>
           {/* 조건부 스타일 적용 */}
+
           <View style={styles.infoContainer}>
                 <Text style={styles.infoText}>이수 학점: {totalCredits}학점</Text>
                 <Text style={styles.infoText}>전공 평균 학점: {averageMajorGrade}</Text>
@@ -88,14 +77,9 @@ import { fetchUserData } from './data';
             </View>
           {/* 기타 필요한 정보 추가 */}
         </View>
+        </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={navigateToProfile}>
-        <Text style={styles.buttonText}>프로필 페이지</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={navigateToDetailCredit}>
-        <Text style={styles.buttonText}>세부이수학점 페이지</Text>
-      </TouchableOpacity>
       </View>
     );
   };

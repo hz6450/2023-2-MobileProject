@@ -6,13 +6,6 @@ const DetailCreditScreen = () => {
   // 여기서 학점 데이터를 가져오는 로직을 추가할 수 있습니다.
   // 예를 들어, API 호출을 통해 학점 정보를 조회할 수 있습니다.
 
-  // 임시 하드코딩된 학점 데이터
-  const creditInfo = {
-    general: 20, // 교양
-    majorSelect: 15, // 전공선택
-    majorRequired: 30, // 전공필수
-    // 필요하다면 추가적인 학점 정보를 여기에 넣을 수 있습니다.
-  };
 
   return (
     <ScrollView style={styles.container}>

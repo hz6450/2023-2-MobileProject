@@ -55,7 +55,7 @@ const Major = ({type, state}) => {
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()} 
                     scrollEnabled={true}
-                    height={500}
+                    height={480}
                     style={{marginBottom: 25}}
                 />
             </View>

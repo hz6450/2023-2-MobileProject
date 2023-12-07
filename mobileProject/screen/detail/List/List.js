@@ -3,16 +3,16 @@ const MajorList = [
     {"types":"필수","title":"오픈소스SW프로젝트(PBL)","credit":3,"grade":3,"semester":1,"score":"A+"},
     {"types":"선택","title":"모바일프로그래밍","credit":3,"grade":3,"semester":1,"score":"A+"},
     {"types":"선택","title":"운영체제","credit":3,"grade":3,"semester":1,"score":"A+"},
-    {"types":"선택","title":"사이버보안개론","credit":3,"grade":3,"semester":1,"score":"A+"},
-    {"types":"선택","title":"컴퓨터네트워크","credit":3,"grade":3,"semester":1,"score":"A+"},
+    {"types":"선택","title":"사이버보안개론","credit":3,"grade":3,"semester":1,"score":"B"},
+    {"types":"선택","title":"컴퓨터네트워크","credit":3,"grade":3,"semester":1,"score":"B+"},
     {"types":"선택","title":"기초프로젝트Ⅱ(PBL AdventureDesign)","credit":3,"grade":2,"semester":2,"score":"A+"},
     {"types":"선택","title":"데이타베이스","credit":3,"grade":2,"semester":2,"score":"A+"},
     {"types":"선택","title":"고급객체지향프로그래밍","credit":3,"grade":2,"semester":2,"score":"A+"},
-    {"types":"선택","title":"임베디드프로그래밍","credit":3,"grade":2,"semester":2,"score":"A+"},
+    {"types":"선택","title":"임베디드프로그래밍","credit":3,"grade":2,"semester":2,"score":"C+"},
     {"types":"필수","title":"컴퓨터구조","credit":3,"grade":2,"semester":2,"score":"A+"},
     {"types":"필수","title":"알고리즘","credit":3,"grade":2,"semester":2,"score":"A+"},
     {"types":"선택","title":"기초프로젝트Ⅰ(PBL)","credit":3,"grade":2,"semester":1,"score":"A+"},
-    {"types":"선택","title":"디지털공학(TIPS)","credit":3,"grade":2,"semester":1,"score":"A+"},
+    {"types":"선택","title":"디지털공학(TIPS)","credit":3,"grade":2,"semester":1,"score":"B+"},
     {"types":"선택","title":"객체지향프로그래밍(PBL)","credit":3,"grade":2,"semester":1,"score":"A+"},
     {"types":"선택","title":"사물인터넷","credit":3,"grade":2,"semester":1,"score":"A"},
     {"types":"필수","title":"데이터구조","credit":3,"grade":2,"semester":1,"score":"A"},
@@ -27,7 +27,7 @@ const MajorList = [
     {"types":"상담지도","title":"상담지도(교수-학생상담)","credit":0,"grade":2,"semester":2,"score":"P"},
     {"types":"핵심교양","title":"인성채플","credit":0,"grade":2,"semester":2,"score":"P"},
     {"types":"자기개발","title":"진로탐색및목표설정","credit":1,"grade":2,"semester":2,"score":"P"},
-    {"types":"상담지도","title":"상담지도(교수-학생상담)","credit":1,"grade":0,"semester":1,"score":"P"},
+    {"types":"상담지도","title":"상담지도(교수-학생상담)","credit":0,"grade":2,"semester":1,"score":"P"},
     {"types":"핵심교양","title":"인성채플","credit":0,"grade":2,"semester":1,"score":"P"},
     {"types":"정보화","title":"파이썬프로그래밍","credit":3,"grade":3,"semester":2,"score":"A+"},
     {"types":"외국어","title":"English Reading and Writing II","credit":2,"grade":1,"semester":2,"score":"A+"},
@@ -42,11 +42,11 @@ const MajorList = [
     {"types":"사고와표현","title":"읽기와토론","credit":2,"grade":1,"semester":1,"score":"A+"},
     {"types":"학문기초","title":"이산수학","credit":3,"grade":1,"semester":2,"score":"A+"},
     {"types":"학문기초","title":"확률및통계","credit":3,"grade":1,"semester":1,"score":"A+"},
-    {"types":"균형교양","title":"세상을바꾸는아름다운수학","credit":3,"grade":2,"semester":2,"score":"A+"},
+    {"types":"균형교양","title":"세상을바꾸는아름다운수학","credit":3,"grade":2,"semester":2,"score":"B+"},
     {"types":"균형교양","title":"기업가정신I(창업)","credit":2,"grade":1,"semester":1,"score":"A+"},
     {"types":"균형교양","title":"인간과심리","credit":3,"grade":3,"semester":1,"score":"A+"},
     {"types":"선택","title":"창의적SW디자인","credit":3,"grade":1,"semester":2,"score":"A+"},
-    {"types":"선택","title":"군 리더십","credit":2,"grade":2,"semester":2,"score":"P"},
+    {"types":"선택","title":"군 리더십","credit":2,"grade":2,"semester" :2,"score":"P"},
     
     
     ]
@@ -96,6 +96,30 @@ const MajorList = [
     const averageMajorGrade = calculateAverageGrade(MajorList);
     const averageRefinementGrade = calculateAverageGrade(RefinementList);
     
-    export { MajorList, RefinementList, averageMajorGrade, averageRefinementGrade, totalCredits };
+    const calculateAverageGradeByYear = (list) => {
+        let yearGrades = { 1: [], 2: [], 3: [], 4: [] };
+    
+        list.forEach(item => {
+            if (item.grade >= 1 && item.grade <= 4) {
+                const gradePoint = scoreToGradePoint(item.score);
+                if (gradePoint > 0) {
+                    yearGrades[item.grade].push(gradePoint * item.credit);
+                }
+            }
+        });
+    
+        let averages = {};
+        for (let year in yearGrades) {
+            let totalGradePoints = yearGrades[year].reduce((total, grade) => total + grade, 0);
+            let totalCredits = yearGrades[year].length;
+            averages[year] = totalCredits > 0 ? (totalGradePoints / totalCredits).toFixed(2) : 'N/A';
+        }
+    
+        return averages;
+    };
+    
+    const averageGradesByYear = calculateAverageGradeByYear([...MajorList, ...RefinementList]);
+    
+    export { MajorList, RefinementList, averageMajorGrade, averageRefinementGrade, totalCredits, averageGradesByYear };
     
     

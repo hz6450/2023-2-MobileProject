@@ -1,3 +1,5 @@
+// adminHome에서 도움말 버튼 누를 시 실행되는 곳
+
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, FlatList, Dimensions } from 'react-native';
 
@@ -7,6 +9,7 @@ const HelpModal = ({ modalVisible, setModalVisible }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef(null);
 
+  // 1~6번 도움말 칸
   const slides = [
     { image: require('../../assets/help/1.png'), text: '학교, 학과, 학년을 확인 후\n교육과정 사진을 업로드해주세요.' },
     { image: require('../../assets/help/2.png'), text: 'OCR이 자동으로 학기와 전공을 인식합니다.' },
@@ -40,6 +43,7 @@ const HelpModal = ({ modalVisible, setModalVisible }) => {
             <Text style={styles.closeButtonText}>×</Text>
           </TouchableOpacity>
 
+          {/* FlatList로 도움말 보여줌 */}
           <FlatList
             ref={flatListRef}
             data={slides}
@@ -76,7 +80,7 @@ const HelpModal = ({ modalVisible, setModalVisible }) => {
 const styles = StyleSheet.create({
   image: {
     width: screenWidth - 90,
-    height: 300, // 이미지 높이 조정
+    height: 300, // 이미지 크기가 제각각이기에 최대 크기를 정해서 다른 페이지를 침범하지 않도록 함
     resizeMode: 'contain'
   },
   pagination: {
@@ -143,7 +147,7 @@ const styles = StyleSheet.create({
   },
   slideContainer: {
     width: screenWidth - 80.5,
-    height: 400, // 이미지와 텍스트를 모두 포함할 수 있도록 조정
+    height: 400, // 이미지와 텍스트를 모두 포함할 수 있도록 함
     alignItems: 'center',
     justifyContent: 'center',
   },

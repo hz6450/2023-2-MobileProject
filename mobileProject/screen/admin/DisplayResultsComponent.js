@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+// ImagePickerComponent.js에서 저장한 좌표값을 기반으로 OCR을 수행하는 컴포넌트
+
+// 이곳의 expo-file-system으로 인해 웹에서는 동작하지 않습니다.
+import React from 'react';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system';
 import { db, doc, setDoc, getDoc } from "../../firebaseConfig";
 
+
+// 이미지 Uri, 드롭다운 값 등을 index.js로부터 받음
 const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts, setUploadComplete, selectedSchool, selectedDepartment, selectedYear }) => {
 
   // Firebase에서 학기별 좌표를 불러오는 함수
@@ -21,7 +26,7 @@ const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts, setUploadC
         semesterCoordinates[semester] = {
           minX: minX - 30,
           maxX: maxX + 30,
-          minY: minY + 30,
+          minY: minY + 20,
           maxY: 980 // maxY는 항상 980으로 고정합니다.
         };
       }
@@ -79,16 +84,16 @@ const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts, setUploadC
       // 구글 OCR
       const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${process.env.EXPO_PUBLIC_apiKey}`;
 
+      // OCR 결과
       const apiResponse = await axios.post(apiURL, requestData);
 
-      // 각 텍스트 블록의 위치 정보를 사용하여 areasToHighlight를 설정합니다.
       const textAnnotations = apiResponse.data.responses[0].textAnnotations;
 
       // 각 학기별 말풍선의 좌표 범위를 정의
       const semesterAreas = await fetchSemesterCoordinatesFromFirebase();
       const desiredTextCoordinates = await fetchDesiredTextsCoordinatesFirebase();
 
-      // 각 학기별로 텍스트 블록을 그룹화하기 위한 초기 구조를 설정합니다.
+      // 각 학기별로 텍스트 블록을 그룹화하기 위한 초기 구조 설정
       let sortedTextsByGroup = {};
       for (const semester of semesters) {
         sortedTextsByGroup[semester] = {};
@@ -97,9 +102,9 @@ const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts, setUploadC
         }
       }
 
-      // 각 학기별 말풍선의 좌표 범위에 따라 텍스트 블록을 그룹화합니다.
+      // 각 학기별 말풍선의 좌표 범위에 따라 텍스트 블록 그룹화
       textAnnotations.forEach((annotation, index) => {
-        if (index === 0) return; // 전체 텍스트는 건너뜁니다.
+        if (index === 0) return; // 전체 텍스트는 건너뜁니다. - 전체 텍스트 -> 단일 텍스트 식으로 구성됨
 
         const vertices = annotation.boundingPoly.vertices;
         const textBlock = {
@@ -168,6 +173,7 @@ const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts, setUploadC
     }
   };
 
+  // 텍스트 블록 처리용 함수
   const processTextBlocks = (textBlocks) => {
     const processedTexts = [];
 
@@ -181,8 +187,9 @@ const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts, setUploadC
     return processedTexts;
   };
 
+  // 특정 거리보다 가까이 있는 블록들을 같은 블록으로 간주
   function isSameLine(block1, block2) {
-    const yThreshold = 18; // y 좌표 차이가 이 값 이하이면 같은 라인으로 간주
+    const yThreshold = 19; // y 좌표 차이가 이 값 이하이면 같은 라인으로 간주
     return Math.abs(block1.minY - block2.minY) < yThreshold ||
       Math.abs(block1.maxY - block2.maxY) < yThreshold;
   }

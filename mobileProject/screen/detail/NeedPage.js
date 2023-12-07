@@ -1,56 +1,57 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
-import { MajorList } from './List.js';
-import firebase from './firebaseConfig';
+import { View, Text, ScrollView } from 'react-native';
+import { db, doc, getDoc } from '../../firebaseConfig.js';
 
 const NeedPage = () => {
-  const [neededCourses, setNeededCourses] = useState([]);
-    const selectedYear = ['2019', '2023']
-    const selectedSemester = ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '4-1', '4-2']
-    const department = ['컴퓨터공학']
-    // firebase에서 값 가져옴
-    const fetchList = async (semester) => {
-        const ocrDocRef = doc(db, selectedSchool, selectedDepartment, selectedYear, semester);
-        const docSnap = await getDoc(ocrDocRef);
+  const [ocrData, setOcrData] = useState({});
+  const selectedSchool = '선문대';
+  const selectedDepartment = '컴퓨터공학';
+  const selectedYear = '2019';
+  const semesters = ['1-1', '1-2', '2-1', '2-2', '3-1', '3-2', '4-1', '4-2'];
+  const name = ['교양', '공통 전공', '컴퓨터 공학 전공', '데이터 공학 전공', '전공 필수'];
 
-        if (docSnap.exists() && docSnap.data() && Object.keys(docSnap.data()).length > 0) {
-            // 문서가 존재하고 데이터가 비어있지 않은 경우
-            setOcrData(docSnap.data());
-            setEditedText(mapOcrDataToEditableText(docSnap.data()));
+  // 각 학기에 대한 데이터 가져오기
+  const fetchList = async () => {
+    let allData = {};
 
-        } else {
-            // 문서가 존재하지 않거나 데이터가 비어있는 경우
-            Alert.alert(
-                "데이터 없음",
-                "선택한 학기에 대한 데이터가 없습니다.",
-                [{ text: "OK", onPress: () => navigation.goBack() }],
-                { cancelable: false }
-            );
-        }
-    };
-    useEffect(() => {
-        const fetchFirebaseData = async () => {
-        // Firebase에서 데이터 가져오기
-        const firebaseData = await firebase.database().ref('/yourPath').once('value');
-        
-        // 비교 로직
-        const missingCourses = firebaseData.filter(course => 
-            !MajorList.some(majorCourse => majorCourse.title === course.title)
-        );
+    for (let semester of semesters) {
+      const ocrDocRef = doc(db, selectedSchool, selectedDepartment, selectedYear, semester);
+      const docSnap = await getDoc(ocrDocRef);
 
-        setNeededCourses(missingCourses);
-        };
+      if (docSnap.exists()) {
+        // name 리스트에 일치하는 경우만 데이터에 추가
+        const data = docSnap.data();
+        allData[semester] = Object.keys(data)
+          .filter(key => name.includes(key))
+          .reduce((obj, key) => {
+            obj[key] = data[key];
+            return obj;
+          }, {});
+      } else {
+        allData[semester] = '데이터가 없습니다';
+      }
+    }
 
-        fetchFirebaseData();
-    }, []);
+    setOcrData(allData);
+  };
 
-    return (
-        <View>
-        {neededCourses.map(course => (
-            <Text key={course.id}>{course.title}</Text>
-        ))}
+  useEffect(() => {
+    fetchList();
+  }, []);
+
+  return (
+    <ScrollView>
+      <View>
+      {Object.entries(ocrData).map(([semester, data]) => (
+        <View key={semester}>
+          <Text>{semester}</Text>
+          <Text>{JSON.stringify(data)}</Text>
         </View>
-    );
+      ))}
+    </View>
+    </ScrollView>
+    
+  );
 };
 
 export default NeedPage;

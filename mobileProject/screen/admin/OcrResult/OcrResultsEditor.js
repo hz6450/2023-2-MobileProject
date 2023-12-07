@@ -18,13 +18,30 @@ const OcrResultsEditor = ({ navigation }) => {
     const [selectedSemester, setSelectedSemester] = useState(semesters[0]);
     const [ocrData, setOcrData] = useState({});
     const [editedText, setEditedText] = useState({});
-
-    // 전공 필수 리스트
-    //const specialSubjects = ["데이터 구조", "알고리즘", "컴퓨터 구조", "오픈 소스 SW 프로젝트", "운영체제 (", "종합 프로젝트"];
+    const [validSemesters, setValidSemesters] = useState([]);
 
     useEffect(() => {
         fetchOcrData(selectedSemester);
-    }, [selectedSemester]);
+        filterValidSemesters();
+    }, [selectedSemester, semesters]);
+
+    // 해당하지 않는 문자열 출력 안 함
+    const filterValidSemesters = async () => {
+        const validSems = [];
+        for (const semester of semesters) {
+            const ocrDocRef = doc(db, selectedSchool, selectedDepartment, selectedYear, semester);
+            const docSnap = await getDoc(ocrDocRef);
+            if (docSnap.exists() && hasNonEmptyGroups(docSnap.data())) {
+                validSems.push(semester);
+            }
+        }
+        setValidSemesters(validSems);
+    };
+
+    const hasNonEmptyGroups = (data) => {
+        const groups = data.groups || {};
+        return ['group1', 'group2', 'group3', 'group4'].some(group => groups[group] && groups[group].length > 0);
+    };
 
     // 문자 삭제
     const deleteText = (group) => {
@@ -232,20 +249,15 @@ const OcrResultsEditor = ({ navigation }) => {
         <ScrollView style={styles.container}>
             <View style={styles.semesterSelector}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {semesters.map(semester => {
-                        if (semester) { // 비어 있지 않은 경우에만 처리
-                            return (
-                                <TouchableOpacity
-                                    key={semester}
-                                    onPress={() => changeSemesterAndSaveChanges(semester)}
-                                    style={[styles.semesterButton, selectedSemester === semester && styles.activeButton]}
-                                >
-                                    <Text style={styles.semesterText}>{semester}</Text>
-                                </TouchableOpacity>
-                            );
-                        }
-                    })}
-
+                    {validSemesters.map(semester => (
+                        <TouchableOpacity
+                            key={semester}
+                            onPress={() => changeSemesterAndSaveChanges(semester)}
+                            style={[styles.semesterButton, selectedSemester === semester && styles.activeButton]}
+                        >
+                            <Text style={styles.semesterText}>{semester}</Text>
+                        </TouchableOpacity>
+                    ))}
                 </ScrollView>
             </View>
             <View style={styles.editor}>

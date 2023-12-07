@@ -103,22 +103,27 @@ const MajorList = [
             if (item.grade >= 1 && item.grade <= 4) {
                 const gradePoint = scoreToGradePoint(item.score);
                 if (gradePoint > 0) {
-                    yearGrades[item.grade].push(gradePoint * item.credit);
+                    yearGrades[item.grade].push({ gradePoint: gradePoint, credit: item.credit });
                 }
             }
         });
     
         let averages = {};
         for (let year in yearGrades) {
-            let totalGradePoints = yearGrades[year].reduce((total, grade) => total + grade, 0);
-            let totalCredits = yearGrades[year].length;
-            averages[year] = totalCredits > 0 ? (totalGradePoints / totalCredits).toFixed(2) : 'N/A';
+            let totalGradePoints = 0;
+            let totalCredits = 0;
+            yearGrades[year].forEach(item => {
+                totalGradePoints += item.gradePoint * item.credit;
+                totalCredits += item.credit;
+            });
+            averages[year] = totalCredits > 0 ? (totalGradePoints / totalCredits).toFixed(2) : '0.0';
         }
     
         return averages;
     };
     
     const averageGradesByYear = calculateAverageGradeByYear([...MajorList, ...RefinementList]);
+    
     
     export { MajorList, RefinementList, averageMajorGrade, averageRefinementGrade, totalCredits, averageGradesByYear };
     

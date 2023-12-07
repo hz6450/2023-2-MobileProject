@@ -5,44 +5,36 @@ import { icons, COLORS } from '../../styles';
 import Major from './Major';
 import styles from './DetailPage.style';
 
-const DetailPage = ({ userData }) => {
-  console.log(userData)
-  // const studentId = route.params?.studentId;
-  // const [userData, setUserData] = useState(null);
+const DetailPage = ({ route }) => {
+  const studentId = route.params?.studentId;
+  
+  const [userData, setUserData] = useState(null);
 
   const types = ['전체', '필수', '선택']// 필수, 선택
-  const [typeState, setTypeState] = useState(types[0]); //type관련 useState
+  const [isTypes, setIsTypes] = useState(types[0]); //types관련 useState
 
-  const majorTypes = ['전공', '교양'] //전공 교양
-  const [majorState, setMajorState] = useState(majorTypes[0]); // state관련 useState
+  const states = ['전공', '교양'] //전공 교양
+  const [isStates, setIsStates] = useState(states[0]); // states관련 useState
 
-  // useEffect(() => {
-  //   console.log(route)
-  //   console.log('Route parameters:', route.params); // 현재 route.params 로그 출력
+  useEffect(() => {
+    console.log('Route parameters:', route.params); // 현재 route.params 로그 출력
   
-  //   const fetchData = async () => {
-  //     if (studentId) {
-  //       const data = await fetchUserData(studentId);
-  //       if (data) {
-  //         setUserData(data);
-  //       } else {
-  //         console.log('No data received for studentId:', studentId);
-  //       }
-  //     } else {
-  //       console.log('studentId is undefined');
-  //     }
-  //   };
+    const fetchData = async () => {
+      if (studentId) {
+        const data = await fetchUserData(studentId);
+        if (data) {
+          setUserData(data);
+        } else {
+          console.log('No data received for studentId:', studentId);
+        }
+      } else {
+        console.log('studentId is undefined');
+      }
+    };
   
-  //   fetchData();
-  // }, [studentId]);
+    fetchData();
+  }, [studentId]);
     
-  
-  const data = {
-    major: '컴퓨터공학과',
-    major_sub: 4, //복수전공:1 , 부전공:2, 전공심화:3, 모듈화:4
-    grade: '3학년',  
-      
-  }
   
   const renderMajorClassification = (classification) => {
     switch (classification) {
@@ -58,14 +50,17 @@ const DetailPage = ({ userData }) => {
         return '분류 없음'; // 만약 해당하지 않는 값이 들어올 경우
     }
   };
-    
+  
+  // 버튼 렌더링 함수
   const renderButton = (type, currentState, setStateFunction) => {    
-    const isSelected = currentState === type;
-    const isState = type === typeState;
-    const backgroundColor = isSelected ? (isState ? COLORS.plum : COLORS.eggplant) : (isState ? COLORS.lilac : COLORS.lavender);
-    const textColor = isSelected ? 'white' : 'black';
-    const fontWeight = isSelected ? 'bold' : 'normal';
-
+    const isTypeSelected = currentState === type;
+    const isStateSelected = type === isStates;
+    const backgroundColor = isTypeSelected ? 
+    (isStateSelected ? COLORS.plum : COLORS.eggplant) : // 선택된 버튼 false(state):true(type)
+    (isStateSelected ? 'green' : 'red'); // 선택되지 않은 버튼 false(state):true(type)
+    const textColor = isTypeSelected ? 'white' : 'black';
+    const fontWeight = isTypeSelected ? 'bold' : 'normal';
+  
     return (
       <TouchableOpacity 
         onPress={() => setStateFunction(type)}
@@ -79,39 +74,47 @@ const DetailPage = ({ userData }) => {
       </TouchableOpacity>
     );
   };
-  const useData = data
-  // const useData = userData
+  
+  // 사용자 정보 렌더링 함수
+  const renderUserInfo = (label, props) => {
+    return (
+      <View style={styles.userInfoRow}>
+        <Text style={styles.userInfoLabel}>{label}:</Text>
+        <Text style={styles.userInfoData}>{props}</Text>
+      </View>
+    )
+  };
+  
   return (
-    <SafeAreaView>
+    <SafeAreaView style = {{paddingHorizontal:10, }}>
       <View style={styles.userInfoContainer}>
         <Image source={icons.user} style={{ width: "30%", height: "100%" }}/>
-          {/*사용자 정보 출력 하는 부분*/}
+        {/*사용자 정보 출력 하는 부분*/}
         <View style={styles.userInfoTextContainer}>
-          <Text style={[styles.userInfoText, styles.majorInfo]}>전공: {useData.major}</Text>
-          <Text style={styles.userInfoText}>전공 분류: {renderMajorClassification(useData.major_sub)}</Text>
-          <Text style={styles.userInfoText}>학년: {useData.grade}</Text>
+          {renderUserInfo('이름', userData?.name)}
+          {renderUserInfo('전공', userData?.major)}
+          {renderUserInfo('전공 분류', renderMajorClassification(userData?.MajorClassification))}
+          {renderUserInfo('학년', userData?.grade)}
         </View>
-    </View>
+      </View>
 
       {/*전공 교양 / 전체 필수 선택 선택 버튼 출력*/}
       <View style={{flexDirection: 'row', }}>
         <View style={styles.typeContainer}>
-          {renderButton(majorTypes[0], majorState, setMajorState)}
-          {renderButton(majorTypes[1], majorState, setMajorState)}
+          {renderButton(states[0], isStates, setIsStates)}
+          {renderButton(states[1], isStates, setIsStates)}
         </View>
         <View style={styles.majortypeContainer}>
-          {renderButton(types[0], typeState, setTypeState)}
-          {renderButton(types[1], typeState, setTypeState)}
-          {renderButton(types[2], typeState, setTypeState)}
+          {renderButton(types[0], isTypes, setIsTypes)}
+          {renderButton(types[1], isTypes, setIsTypes)}
+          {renderButton(types[2], isTypes, setIsTypes)}
         </View>
       </View>
-
-
-      <Major 
-      type = {typeState}
-      state = {majorState}
-      />
       
+      <Major 
+        type = {isTypes}
+        state = {isStates}
+      />
     </SafeAreaView>
   );
 }

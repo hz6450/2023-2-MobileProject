@@ -50,7 +50,12 @@ function TabNavigator({ route }) {
         component={Profile} 
         initialParams={{ studentId: studentId }}
       />
-      <Tab.Screen name="DetailPage" component={DetailPage} options={{ title: '세부이수학점 페이지' }} />
+      <Tab.Screen name="DetailPage" 
+        component={DetailPage} 
+        options={{ title: '세부이수학점 페이지' }} 
+        initialParams={{ studentId: studentId }}
+      />
+
     </Tab.Navigator>
   );
 }
@@ -70,13 +75,13 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen 
-      name="MainTab" 
-      component={TabNavigator} 
-      options={{ headerShown: false }}
-    />
+        <Stack.Screen 
+          name="MainTab" 
+          component={TabNavigator} 
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="Ocr" component={Ocr} />
-        
+      
         {/* Updated component name with first letter capitalized */}
         <Stack.Screen name="AdminHome" component={AdminHomeScreen} />
 

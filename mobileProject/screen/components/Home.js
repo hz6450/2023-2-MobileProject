@@ -56,9 +56,9 @@ import { fetchUserData } from './data';
       barPercentage: 0.5,
       useShadowColorFromDataset: false, // 데이터셋에서 그림자 색상 사용 여부
       propsForDots: {
-          r: "6", // 점의 반지름
-          strokeWidth: "2", // 점의 외곽선 두께
-          stroke: "#ffa726" // 점의 외곽선 색상
+        r: "6", // 점의 반지름
+        strokeWidth: "2", // 점의 외곽선 두께
+        stroke: "#ffa726" // 점의 외곽선 색상
       },
       decimalPlaces: 2, // 소수점 자릿수
       fillShadowGradient: '#4caf50', // 선 아래 그림자 그라데이션 색상

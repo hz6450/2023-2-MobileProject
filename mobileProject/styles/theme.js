@@ -6,10 +6,16 @@ const COLORS = {
 	plum: "#8D0837", //quinary
 
     gray: "#AEA8BD",
-    lightgray: "#E7E7E9",
     
     white: "#F3F4F8",
     lightWhite: "#FAFAFC",
+    
+    delicateBeige:'#F1ECE1',
+    paleBeige:'#D3C9B5',
+    lightGray:'#969691',
+    silverGray:'#CACCCB',
+    lightSteelGray:'#E2E3E5',
+    hopefulWhite:'#EFF1F0'
 };
 
 export {COLORS};

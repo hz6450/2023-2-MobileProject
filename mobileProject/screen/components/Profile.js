@@ -8,6 +8,7 @@ const Profile = ({ route, navigation }) => {
   const studentId = route.params?.studentId || '기본값';
 
   useEffect(() => {
+    console.log(route)
     const fetchUser = async () => {
       setIsLoading(true);
       const userData = await fetchUserData(studentId);

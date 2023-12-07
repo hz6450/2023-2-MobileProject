@@ -17,9 +17,9 @@ const Major = ({type, state }) => {
     const [majorCreditsByType, setMajorCreditsByType] = useState({});
     const [refinementCreditsByType, setRefinementCreditsByType] = useState({});
     //선택
-    const ch_types = ['선택', '균형교양']
+    const chTypes = ['선택', '균형교양']
     //필수
-    const es_types = [ '필수', '사고와표현', '상담지도', '외국어', '인성교양', '자기개발', '정보화', '학문기초', '핵심교양', '현통']
+    const esTypes = [ '필수', '사고와표현', '상담지도', '외국어', '인성교양', '자기개발', '정보화', '학문기초', '핵심교양', '현통']
 
     const printcreditsByType = (types) => (
         Object.entries(types).map(([key, index]) => (

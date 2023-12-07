@@ -3,7 +3,7 @@ import { fetchUserData } from './data';
   import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
   import { LineChart } from 'react-native-chart-kit';
   import { Dimensions } from 'react-native';
-  import { totalCredits, averageMajorGrade, averageRefinementGrade } from '../detail/List/List';
+  import { totalCredits, averageMajorGrade, averageRefinementGrade, averageGradesByYear  } from '../detail/List/List';
 
   const screenWidth = Dimensions.get('window').width;
 
@@ -26,12 +26,17 @@ import { fetchUserData } from './data';
     const data = {
       labels: ["1학년", "2학년", "3학년", "4학년"],
       datasets: [
-        {
-          data: [3.2, 3.7, 3.3, 4.1],
-          strokeWidth: 2, // optional
-        },
+          {
+              data: [
+                  parseFloat(averageGradesByYear[1]),
+                  parseFloat(averageGradesByYear[2]),
+                  parseFloat(averageGradesByYear[3]),
+                  parseFloat(averageGradesByYear[4])
+              ],
+              strokeWidth: 2, // optional
+          },
       ],
-    };
+  };
 
     const chartConfig = {
       backgroundGradientFrom: "#ffffff",

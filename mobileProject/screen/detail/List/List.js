@@ -46,7 +46,7 @@ const MajorList = [
     {"types":"균형교양","title":"기업가정신I(창업)","credit":2,"grade":1,"semester":1,"score":"A+"},
     {"types":"균형교양","title":"인간과심리","credit":3,"grade":3,"semester":1,"score":"A+"},
     {"types":"선택","title":"창의적SW디자인","credit":3,"grade":1,"semester":2,"score":"A+"},
-    {"types":"선택","title":"군 리더십","credit":2,"grade":2,"semester":2,"score":"P"},
+    {"types":"선택","title":"군 리더십","credit":2,"grade":2,"semester" :2,"score":"P"},
     
     
     ]
@@ -96,6 +96,30 @@ const MajorList = [
     const averageMajorGrade = calculateAverageGrade(MajorList);
     const averageRefinementGrade = calculateAverageGrade(RefinementList);
     
-    export { MajorList, RefinementList, averageMajorGrade, averageRefinementGrade, totalCredits };
+    const calculateAverageGradeByYear = (list) => {
+        let yearGrades = { 1: [], 2: [], 3: [], 4: [] };
+    
+        list.forEach(item => {
+            if (item.grade >= 1 && item.grade <= 4) {
+                const gradePoint = scoreToGradePoint(item.score);
+                if (gradePoint > 0) {
+                    yearGrades[item.grade].push(gradePoint * item.credit);
+                }
+            }
+        });
+    
+        let averages = {};
+        for (let year in yearGrades) {
+            let totalGradePoints = yearGrades[year].reduce((total, grade) => total + grade, 0);
+            let totalCredits = yearGrades[year].length;
+            averages[year] = totalCredits > 0 ? (totalGradePoints / totalCredits).toFixed(2) : 'N/A';
+        }
+    
+        return averages;
+    };
+    
+    const averageGradesByYear = calculateAverageGradeByYear([...MajorList, ...RefinementList]);
+    
+    export { MajorList, RefinementList, averageMajorGrade, averageRefinementGrade, totalCredits, averageGradesByYear };
     
     

@@ -12,6 +12,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DetailPage from './screen/detail/DetailPage';
 import AdminHomeScreen from './screen/components/adminHome'
 
+// stack, tab 네비게이션 설정
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -19,7 +20,7 @@ const OcrResultsStack = createNativeStackNavigator();
 
 function TabNavigator({ route }) {
 
-  const studentId = route.params?.studentId.toString();
+  const studentId = route.params?.screen === 'Home' ? route.params.params.studentId : undefined;
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -69,12 +70,11 @@ function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen 
-          name="MainTab" 
-          component={TabNavigator} 
-          options={{ headerShown: false }}
-          initialParams={{ studentId: 1234 }}  // 예시 studentId
-        />
+            <Stack.Screen 
+      name="MainTab" 
+      component={TabNavigator} 
+      options={{ headerShown: false }}
+    />
         <Stack.Screen name="Ocr" component={Ocr} />
         
         {/* Updated component name with first letter capitalized */}

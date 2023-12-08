@@ -14,18 +14,24 @@ const Major = ({type, state}) => {
 
    //선택 필수 버튼을 눌렀을 때 적용되는 필터링 함수
     const renderFilteredCourseList = (courseList) => {
+        //필수버튼 이 눌렀을때 필수만 출력
         if (type === types[1]) {
           return printcreditsByStateType(courseList.filter(item => esTypes.includes(item.types)));
           
-        } else if (type === types[2]) {
+        } 
+        //선택버튼이 눌렀을때 선택만 출력
+        else if (type === types[2]) {
           return printcreditsByStateType(courseList.filter(item => chTypes.includes(item.types)));
-        } else {
+        } 
+        //전체버튼이 눌렀을때 전체 출력
+        else {
           return printcreditsByStateType(courseList);
         }
-      };
+    };
 
     // 수업 리스트 나오는 함수 
     const printcreditsByStateType = (courseList) => {
+        // 수업 리스트 출력하는 부분 FlatList사용
         const renderItem = ({ item }) => (
             <View style={styles.printbody}>
                 <Text style={styles.typebody}>{item.types}</Text>
@@ -37,6 +43,7 @@ const Major = ({type, state}) => {
         
         return (
             <View> 
+                {/* 리스트 상단 탭 출력하는곳  */}
                 <View style={styles.printhead}>
                     <Text style={styles.typehead}>분류</Text>
                     <Text style={styles.titlehead}>과목 명</Text>
@@ -48,8 +55,8 @@ const Major = ({type, state}) => {
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()} 
                     scrollEnabled={true}
-                    height={480}
-                    style={{marginBottom: 25}}
+                    height={400}
+                    style={{marginBottom: 40}}
                 />
             </View>
         );
@@ -57,9 +64,7 @@ const Major = ({type, state}) => {
 
     return (
         <SafeAreaView>
-
-            {
-            // 전공 교양 선택에 대한 로직
+            {// 전공 교양 선택에 대한 로직
             state === states[0] ?
                 renderFilteredCourseList(MajorList):
                 renderFilteredCourseList(RefinementList)

@@ -56,8 +56,8 @@ const DetailPage = ({ route }) => {
     const isTypeSelected = currentState === type;
     const isStateSelected = type === isStates;
     const backgroundColor = isTypeSelected ? 
-    (isStateSelected ? COLORS.plum : COLORS.eggplant) : // 선택된 버튼 false(state):true(type)
-    (isStateSelected ? 'green' : 'red'); // 선택되지 않은 버튼 false(state):true(type)
+    (isStateSelected ? COLORS.graphiteGray : COLORS.milkCoffee) : // 선택된 버튼 false(state):true(type)
+    COLORS.lightSilver; // 선택되지 않은 버튼 
     const textColor = isTypeSelected ? 'white' : 'black';
     const fontWeight = isTypeSelected ? 'bold' : 'normal';
   
@@ -104,7 +104,7 @@ const DetailPage = ({ route }) => {
           {renderButton(states[0], isStates, setIsStates)}
           {renderButton(states[1], isStates, setIsStates)}
         </View>
-        <View style={styles.majortypeContainer}>
+        <View style={styles.typeContainer}>
           {renderButton(types[0], isTypes, setIsTypes)}
           {renderButton(types[1], isTypes, setIsTypes)}
           {renderButton(types[2], isTypes, setIsTypes)}

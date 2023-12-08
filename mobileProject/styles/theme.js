@@ -10,12 +10,22 @@ const COLORS = {
     white: "#F3F4F8",
     lightWhite: "#FAFAFC",
     
+    //ColorView.png
     delicateBeige:'#F1ECE1',
     paleBeige:'#D3C9B5',
     lightGray:'#969691',
     silverGray:'#CACCCB',
     lightSteelGray:'#E2E3E5',
-    hopefulWhite:'#EFF1F0'
+    hopefulWhite:'#EFF1F0',
+
+    //ColorView1.png
+    platinumGray:'#F2F2F2',
+    lightSilver:'#E8E8E8',
+    seaGreen:'#BCC4C3',
+    graphiteGray:'#595252',
+    wineRed:'#703F4B',
+    milkCoffee:'#C2AF99',
+
 };
 
 export {COLORS};

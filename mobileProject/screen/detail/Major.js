@@ -1,9 +1,3 @@
-// 해야할 것 
-// 전체 리스트 볼수 있게 해야함
-// 각 텍스트 눌러서 세부 정보를 볼 수 있게 해야함
-// 
-// css작업
-
 import {SafeAreaView, FlatList, Text, View, } from 'react-native';
 import {MajorList, RefinementList} from './List/List';
 import styles from './Major.style';
@@ -18,7 +12,7 @@ const Major = ({type, state}) => {
     //필수
     const esTypes = [ '필수', '사고와표현', '상담지도', '외국어', '인성교양', '자기개발', '정보화', '학문기초', '핵심교양', '현통']
 
-   
+   //선택 필수 버튼을 눌렀을 때 적용되는 필터링 함수
     const renderFilteredCourseList = (courseList) => {
         if (type === types[1]) {
           return printcreditsByStateType(courseList.filter(item => esTypes.includes(item.types)));
@@ -29,6 +23,8 @@ const Major = ({type, state}) => {
           return printcreditsByStateType(courseList);
         }
       };
+
+    // 수업 리스트 나오는 함수 
     const printcreditsByStateType = (courseList) => {
         const renderItem = ({ item }) => (
             <View style={styles.printbody}>
@@ -41,9 +37,6 @@ const Major = ({type, state}) => {
         
         return (
             <View> 
-                {/* 평균 구하는 부분 추가 할 것 */}
-                
-
                 <View style={styles.printhead}>
                     <Text style={styles.typehead}>분류</Text>
                     <Text style={styles.titlehead}>과목 명</Text>
@@ -64,14 +57,10 @@ const Major = ({type, state}) => {
 
     return (
         <SafeAreaView>
-            {/* <Text>{type} \ {state} </Text>
-            {type === states[0] ?
-                   
-                printcreditsByType(majorCreditsByType):
-                printcreditsByType(refinementCreditsByType)
-            } */}
-            {state === states[0] ?
-                // 전공에 대한 로직   
+
+            {
+            // 전공 교양 선택에 대한 로직
+            state === states[0] ?
                 renderFilteredCourseList(MajorList):
                 renderFilteredCourseList(RefinementList)
             }

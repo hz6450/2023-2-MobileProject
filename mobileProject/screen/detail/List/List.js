@@ -6,7 +6,7 @@ const MajorList = [
     {"types":"선택","title":"사이버보안개론","credit":3,"grade":3,"semester":1,"score":"B"},
     {"types":"선택","title":"컴퓨터네트워크","credit":3,"grade":3,"semester":1,"score":"B+"},
     {"types":"선택","title":"기초프로젝트Ⅱ(PBL AdventureDesign)","credit":3,"grade":2,"semester":2,"score":"A+"},
-    {"types":"선택","title":"데이타베이스","credit":3,"grade":2,"semester":2,"score":"B+"},
+    {"types":"선택","title":"데이타베이스","credit":3,"grade":2,"semester":2,"score":"A+"},
     {"types":"선택","title":"고급객체지향프로그래밍","credit":3,"grade":2,"semester":2,"score":"A+"},
     {"types":"선택","title":"임베디드프로그래밍","credit":3,"grade":2,"semester":2,"score":"C+"},
     {"types":"필수","title":"컴퓨터구조","credit":3,"grade":2,"semester":2,"score":"A+"},
@@ -14,9 +14,9 @@ const MajorList = [
     {"types":"선택","title":"기초프로젝트Ⅰ(PBL)","credit":3,"grade":2,"semester":1,"score":"A+"},
     {"types":"선택","title":"디지털공학(TIPS)","credit":3,"grade":2,"semester":1,"score":"B+"},
     {"types":"선택","title":"객체지향프로그래밍(PBL)","credit":3,"grade":2,"semester":1,"score":"A+"},
-    {"types":"선택","title":"사물인터넷","credit":3,"grade":2,"semester":1,"score":"A+"},
-    {"types":"필수","title":"데이터구조","credit":3,"grade":2,"semester":1,"score":"A+"},
-    {"types":"선택","title":"프로그래밍&응용(PBL)","credit":3,"grade":1,"semester":2,"score":"A+"},
+    {"types":"선택","title":"사물인터넷","credit":3,"grade":2,"semester":1,"score":"A"},
+    {"types":"필수","title":"데이터구조","credit":3,"grade":2,"semester":1,"score":"A"},
+    {"types":"선택","title":"프로그래밍&응용(PBL)","credit":3,"grade":1,"semester":2,"score":"B"},
     {"types":"선택","title":"기초설계(TIPS)","credit":3,"grade":1,"semester":1,"score":"A+"}
     ]
     
@@ -46,7 +46,7 @@ const MajorList = [
     {"types":"균형교양","title":"기업가정신I(창업)","credit":2,"grade":1,"semester":1,"score":"A+"},
     {"types":"균형교양","title":"인간과심리","credit":3,"grade":3,"semester":1,"score":"A+"},
     {"types":"선택","title":"창의적SW디자인","credit":3,"grade":1,"semester":2,"score":"A+"},
-    {"types":"선택","title":"군 리더십","credit":2,"grade":2,"semester":2,"score":"P"},
+    {"types":"선택","title":"군 리더십","credit":2,"grade":2,"semester" :2,"score":"P"},
     
     
     ]
@@ -96,6 +96,36 @@ const MajorList = [
     const averageMajorGrade = calculateAverageGrade(MajorList);
     const averageRefinementGrade = calculateAverageGrade(RefinementList);
     
-    export { MajorList, RefinementList, averageMajorGrade, averageRefinementGrade, totalCredits };
+    // 학년별 학점평균 계산
+    const calculateAverageGradeByYear = (list) => {
+        let yearGrades = { 1: [], 2: [], 3: [], 4: [] };
+    
+        list.forEach(item => {
+            if (item.grade >= 1 && item.grade <= 4) {
+                const gradePoint = scoreToGradePoint(item.score);
+                if (gradePoint > 0) {
+                    yearGrades[item.grade].push({ gradePoint: gradePoint, credit: item.credit });
+                }
+            }
+        });
+    
+        let averages = {};
+        for (let year in yearGrades) {
+            let totalGradePoints = 0;
+            let totalCredits = 0;
+            yearGrades[year].forEach(item => {
+                totalGradePoints += item.gradePoint * item.credit;
+                totalCredits += item.credit;
+            });
+            averages[year] = totalCredits > 0 ? (totalGradePoints / totalCredits).toFixed(2) : '0.0';
+        }
+    
+        return averages;
+    };
+    
+    const averageGradesByYear = calculateAverageGradeByYear([...MajorList, ...RefinementList]);
+    
+    
+    export { MajorList, RefinementList, averageMajorGrade, averageRefinementGrade, totalCredits, averageGradesByYear };
     
     

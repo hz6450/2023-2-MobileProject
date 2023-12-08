@@ -52,27 +52,28 @@ const styles = StyleSheet.create({
 
     typebody:{
         flex:1,
-        fontSize: 15,
+        fontSize: 17,
         textAlign:'center',
         borderRightWidth: 1,
 
     },
     titlebody:{
         flex:5,
-        fontSize: 15,
+        fontSize: 17,
         borderRightWidth: 1,
+        marginLeft: 10,
 
     },
     creditbody:{
         flex:1,
-        fontSize: 15,
+        fontSize: 17,
         textAlign:'center',
         borderRightWidth: 1,
 
     },
     scorebody:{
         flex:1,
-        fontSize: 15,
+        fontSize: 17,
         textAlign:'center',
         borderRightWidth: 0,
 

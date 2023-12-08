@@ -3,7 +3,7 @@ import { fetchUserData } from './data';
   import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
   import { LineChart } from 'react-native-chart-kit';
   import { Dimensions } from 'react-native';
-  import { totalCredits, averageMajorGrade, averageRefinementGrade } from '../detail/List/List';
+  import { totalCredits, averageMajorGrade, averageRefinementGrade, averageGradesByYear  } from '../detail/List/List';
 
   const screenWidth = Dimensions.get('window').width;
 
@@ -11,7 +11,8 @@ import { fetchUserData } from './data';
     const [userData, setUserData] = useState(null);
     const email = route.params?.studentId;
 
-    useEffect(() => {
+    useEffect(() => {       
+      // 파이어베이스에서 값 호출
       const loadData = async () => {
         const data = await fetchUserData(email);
         if (data) {
@@ -22,33 +23,51 @@ import { fetchUserData } from './data';
       loadData();
     }, [email]);
 
-    const studentId = route.params?.studentId;
+    useEffect(() => {
+      // 가져온 평균 학점과 총 학점을 콘솔에 출력
+      console.log("전공 평균 학점:", averageMajorGrade);
+      console.log("교양 평균 학점:", averageRefinementGrade);
+      console.log("이수 학점:", totalCredits);
+      console.log("학년별 평균 학점:", averageGradesByYear);
+    }, []);
+
+    const { studentId } = route.params;
     const data = {
-      labels: ["1학년", "2학년", "3학년", "4학년"],
-      datasets: [
-        {
-          data: [3.2, 3.7, 3.3, 4.1],
-          strokeWidth: 2, // optional
-        },
-      ],
+        labels: ["1학년", "2학년", "3학년", "4학년"],
+        datasets: [
+            {
+                data: [
+                    parseFloat(averageGradesByYear[1]),
+                    parseFloat(averageGradesByYear[2]),
+                    parseFloat(averageGradesByYear[3]),
+                    parseFloat(averageGradesByYear[4])
+                ],
+                strokeWidth: 2, // optional
+            },
+        ],
     };
 
     const chartConfig = {
-      backgroundGradientFrom: "#ffffff",
-      backgroundGradientTo: "#ffffff",
-      color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-      labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-      strokeWidth: 5,
+      backgroundGradientFrom: "#f0f0f0", // 배경 그라데이션 시작 색상
+      backgroundGradientTo: "#ffffff", // 배경 그라데이션 종료 색상
+      color: (opacity = 1) => `rgba(34, 202, 236, ${opacity})`, // 선 및 텍스트 색상
+      labelColor: (opacity = 1) => `rgba(23, 153, 169, ${opacity})`, // 라벨(학년) 텍스트 색상
+      strokeWidth: 3, // 선의 두께
       barPercentage: 0.5,
-      useShadowColorFromDataset: false,
+      useShadowColorFromDataset: false, // 데이터셋에서 그림자 색상 사용 여부
       propsForDots: {
-        r: "6",
-        strokeWidth: "2",
-        stroke: "#ffa726"
+        r: "6", // 점의 반지름
+        strokeWidth: "2", // 점의 외곽선 두께
+        stroke: "#ffa726" // 점의 외곽선 색상
       },
-    };
+      decimalPlaces: 2, // 소수점 자릿수
+      fillShadowGradient: '#4caf50', // 선 아래 그림자 그라데이션 색상
+      fillShadowGradientOpacity: 0.3, // 선 아래 그림자 그라데이션 투명도
+  };
+  
 
     const navigateToDetailCredit = () => {
+      // 세부이수학점으로 이동
       navigation.navigate('DetailPage' ,  { studentId: studentId });
     }
 
@@ -58,6 +77,7 @@ import { fetchUserData } from './data';
 
         <View style={styles.dashboard}>
           <View style={styles.chartContainer}>
+            {/* 학점 그래프 적용 */}
             <LineChart
               data={data}
               width={screenWidth - 60}
@@ -65,21 +85,17 @@ import { fetchUserData } from './data';
               chartConfig={chartConfig}
             />
           </View>
-      <TouchableOpacity onPress={navigateToDetailCredit}>
-
           <View style={styles.infoContainer}>
-          {/* 조건부 스타일 적용 */}
-
+          
+          <TouchableOpacity onPress={navigateToDetailCredit}>
           <View style={styles.infoContainer}>
                 <Text style={styles.infoText}>이수 학점: {totalCredits}학점</Text>
                 <Text style={styles.infoText}>전공 평균 학점: {averageMajorGrade}</Text>
                 <Text style={styles.infoText}>교양 평균 학점: {averageRefinementGrade}</Text>
             </View>
-          {/* 기타 필요한 정보 추가 */}
+          </TouchableOpacity>
         </View>
-        </TouchableOpacity>
         </View>
-
       </View>
     );
   };

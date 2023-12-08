@@ -203,15 +203,19 @@ const DisplayResultsComponent = ({ imageUri, semesters, desiredTexts, setUploadC
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-    marginBottom: 10,
+    backgroundColor: '#2196F3', // 밝은 색상
+    padding: 15,
+    borderRadius: 5, // 모서리 둥글게
+    alignItems: 'center',
     marginTop: 20,
+    marginBottom: 20,
   },
   text: {
-    fontSize: 20,
+    fontSize: 18,
+    color: 'white', // 텍스트 색상 변경
     fontWeight: 'bold',
   },
 });
+
 
 export default DisplayResultsComponent;

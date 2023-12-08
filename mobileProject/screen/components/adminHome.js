@@ -133,6 +133,13 @@ const AdminHomeScreen = ({ navigation }) => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
+            {/* 닫기 버튼 추가 */}
+            <TouchableOpacity
+              style={styles.closeModalButton}
+              onPress={() => setMajorModalVisible(!majorModalVisible)}
+            >
+              <Text style={styles.closeModalButtonText}>×</Text>
+            </TouchableOpacity>
             {desiredTexts.map((text, index) => (
               <Text key={index} style={styles.modalText}>
                 {text}
@@ -142,7 +149,6 @@ const AdminHomeScreen = ({ navigation }) => {
               style={[styles.button, styles.buttonClose]}
               onPress={() => setMajorModalVisible(!majorModalVisible)}
             >
-              <Text style={styles.textStyle}>닫기</Text>
             </TouchableOpacity>
             <Text style={styles.modalSubText}>전공이 맞지 않을 경우 관리자에게 문의바랍니다</Text>
           </View>
@@ -150,11 +156,11 @@ const AdminHomeScreen = ({ navigation }) => {
       </Modal>
 
 
-      <TouchableOpacity style={styles.button} onPress={navigateToOCR}>
-        <Text style={styles.buttonText}>업로드(OCR)</Text>
+      <TouchableOpacity style={styles.buttonOcr} onPress={navigateToOCR}>
+        <Text style={styles.buttonTextOcr}>업로드(OCR)</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={navigateManage}>
-        <Text style={styles.buttonText}>상세 설정</Text>
+      <TouchableOpacity style={styles.buttonSet} onPress={navigateManage}>
+        <Text style={styles.buttonTextSet}>상세 설정</Text>
       </TouchableOpacity>
     </View>
   );
@@ -222,8 +228,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333', // 제목 텍스트 색상 변경
   },
-  button: {
-    backgroundColor: '#4caf50', // 버튼 배경색 변경
+  buttonOcr: {
+    backgroundColor: '#2c8fd0', // 버튼 배경색 변경
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
@@ -233,7 +239,23 @@ const styles = StyleSheet.create({
     width: 200,
     height: 50,
   },
-  buttonText: {
+  buttonSet: {
+    backgroundColor: '#0e48a9', // 버튼 배경색 변경
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+    marginHorizontal: 80,
+    width: 200,
+    height: 50,
+  },
+  buttonTextOcr: {
+    color: '#fff', // 버튼 텍스트 색상 변경
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  buttonTextSet: {
     color: '#fff', // 버튼 텍스트 색상 변경
     fontSize: 16,
     fontWeight: 'bold',
@@ -304,7 +326,7 @@ const styles = StyleSheet.create({
   },
   majorButton: {
     // "전공 확인" 버튼 스타일
-    backgroundColor: '#6a51ae', // 버튼 배경색 변경
+    backgroundColor: '#41c4ee', // 버튼 배경색 변경
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
@@ -319,6 +341,21 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  closeModalButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#ffffff', // 배경색
+    borderRadius: 18,
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeModalButtonText: {
+    fontSize: 18,
+    color: '#000', // 글자색
   },
 });
 

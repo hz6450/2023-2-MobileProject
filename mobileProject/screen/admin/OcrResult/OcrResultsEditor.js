@@ -29,6 +29,16 @@ const OcrResultsEditor = ({ navigation }) => {
         filterValidSemesters();
     }, [selectedSemester, semesters]);
 
+    // 각 그룹에 대한 라벨링용 함수
+    const getGroupLabel = (group) => {
+        if (group === 'group1') {
+            return '교양'; // 첫 번째 그룹은 항상 '교양'
+        } else {
+            const groupIndex = parseInt(group.replace('group', '')) - 2; // group1을 제외한 나머지 그룹 인덱스
+            return desiredTexts[groupIndex] || group; // desiredTexts 배열 또는 기본 그룹 이름 사용
+        }
+    };
+
     // semesters 값 중 firebase 그룹 값이 비어있는 곳의 경우 버튼을 생성하지 않음
     const filterValidSemesters = async () => {
         const validSems = [];
@@ -271,13 +281,18 @@ const OcrResultsEditor = ({ navigation }) => {
             <View style={styles.editor}>
                 {Object.keys(editedText).sort((a, b) => a.localeCompare(b, undefined, { numeric: true })).map(group => (
                     <View key={group} style={styles.groupContainer}>
+
+                        <Text style={styles.groupLabel}>{getGroupLabel(group)}</Text>
                         {editedText[group].split('\n').map((line, index) => (
+
                             <View key={`${group}-${index}`} style={styles.lineContainer}>
+
                                 <TextInput
                                     style={styles.lineTextInput}
                                     value={line}
                                     onChangeText={(newLine) => editLine(group, index, newLine)}
                                 />
+
                                 <View style={styles.lineButtonRow}>
                                     {/* "간략" 버튼 */}
                                     <TouchableOpacity onPress={() => simplifyText(group, index)} style={styles.lineButton}>
@@ -292,12 +307,15 @@ const OcrResultsEditor = ({ navigation }) => {
                                         <Text style={styles.buttonText}>↓</Text>
                                     </TouchableOpacity>
                                 </View>
+
                             </View>
+
                         ))}
                         {/* 그룹 삭제 버튼 */}
                         <TouchableOpacity onPress={() => deleteText(group)} style={styles.deleteButton}>
                             <Text style={styles.buttonText}>삭제</Text>
                         </TouchableOpacity>
+
                     </View>
                 ))}
             </View>
@@ -340,7 +358,7 @@ const styles = StyleSheet.create({
         minHeight: 100,
     },
     saveButton: {
-        backgroundColor: '#00CC00',
+        backgroundColor: '#03a63c',
         padding: 15,
         alignItems: 'center',
         marginBottom: 40,
@@ -360,9 +378,21 @@ const styles = StyleSheet.create({
         padding: 10,
         margin: 2,
     },
+    groupLabel: {
+        fontWeight: 'bold',
+        fontSize: 24,
+        marginBottom: 10,
+        color: '#003366', // 짙은 파란색으로 라벨 색상 변경
+        marginBottom: 10,
+        paddingLeft: 10, // 왼쪽 패딩 추가
+    },
     buttonText: {
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    deleteButton: {
+        alignSelf: 'flex-end',
+        paddingRight: 10,
     },
     groupContainer: {
         borderWidth: 1,
@@ -399,6 +429,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#DDDDDD',
         padding: 6,
         marginLeft: 4,
+        
     },
 });
 

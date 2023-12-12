@@ -4,7 +4,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screen/components/Home';
 import Profile from './screen/components/Profile';
-import DetailCredit from './screen/components/DetailCredit';
 import LoginScreen from './screen/Auth/Login';
 import Ocr from './screen/admin/index';
 import OcrResultsEditor from './screen/admin/OcrResult/OcrResultsEditor';
